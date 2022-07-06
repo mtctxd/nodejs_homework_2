@@ -11,6 +11,7 @@ const userCreateScheme = Joi.object<User>().keys({
   age: Joi.number().min(7).max(110).required(),
   // isDeleted: Joi.boolean().required(),
 });
+
 const userUpdateScheme = Joi.object<User>().keys({
   login: Joi.string().min(6).max(18),
   password: Joi.string().min(6).max(32),
@@ -19,32 +20,55 @@ const userUpdateScheme = Joi.object<User>().keys({
 });
 
 const users: User[] = [
-  { id: 1, age: 18, isDeleted: false, login: 'romka', password: 'password' },
-  { id: 2, age: 9, isDeleted: true, login: 'ilone', password: 'ilona1234' },
+  { id: 1, age: 18, isDeleted: false, login: 'Romka', password: 'RRRpassword' },
+  { id: 2, age: 18, isDeleted: false, login: 'romka', password: 'password' },
+  { id: 3, age: 9, isDeleted: true, login: 'ilone', password: 'ilona1234' },
   {
-    id: 3,
+    id: 4,
     age: 55,
     isDeleted: false,
     login: 'dudka',
     password: 'passwordDUDKA',
   },
-  { id: 4, age: 99, isDeleted: false, login: 'sashka', password: 'sashka123' },
+  { id: 5, age: 99, isDeleted: false, login: 'sashka', password: 'sashka123' },
 ];
+
+function getAutoSuggestUsers(
+  loginSubscring: string = '',
+  limit: string = '10'
+): User[] {
+  let result = [...users];
+
+  if (loginSubscring) {
+    result = result
+      .filter((user) =>
+        user.login.toLowerCase().includes(loginSubscring.toLowerCase())
+      )
+      .sort((current: User, prev: User) =>
+        current.login.localeCompare(prev.login)
+      );
+  }
+
+  if (limit) {
+    result.splice(+limit);
+  }
+
+  return result;
+}
 
 const getMaxId = (data: User[]): number => {
   return Math.max(...data.map(({ id }) => id)) + 1 || 1;
 };
 
 router.get('/', (req: Request, res: Response, next) => {
-  console.log('get /');
-
-  res.send(users);
+  const login = req.query.login as string;
+  const limit = req.query.limit as string;
+  res.send(getAutoSuggestUsers.call(users, login, limit));
 });
 
 router.get('/:id', (req: Request, res: Response, next) => {
-  console.log('get /:id');
   const { id } = req.params;
-  const result = users.find((user) => user.id === +id);
+  let result = users.find((user) => user.id === +id);
 
   if (!result) {
     res.status(404).send({ message: `There no user with id: ${id}` });
@@ -53,25 +77,28 @@ router.get('/:id', (req: Request, res: Response, next) => {
   }
 });
 
-router.post('/', (req: Request, res: Response, next) => {
+router.post('/:id', (req: Request, res: Response, next) => {
   const userData = userCreateScheme.validate(req.body);
 
-  if (userData.error) {
-    res.send({ message: userData.error?.details[0].message });
+  const { id } = req.params;
+
+  if (users.find((user) => user.id === +id)) {
+    res.status(404).send({ message: 'You are trying to add existing user' });
+  } else if (userData.error) {
+    res.status(404).send({ message: userData.error?.details[0].message });
+  } else {
+    const { password, login, age } = req.body;
+
+    const newUser: User = {
+      id: getMaxId(users),
+      password,
+      isDeleted: false,
+      login,
+      age,
+    };
+
+    res.status(201).send(newUser);
   }
-
-  const { password, login, age } = req.body;
-
-  const newUser: User = {
-    id: getMaxId(users),
-    password,
-    isDeleted: false,
-    login,
-    age,
-  };
-
-  res.status(201).send(newUser);
-  res.status(201).send('created');
 });
 
 router.put('/:id', (req: Request, res: Response, next) => {
@@ -88,17 +115,25 @@ router.put('/:id', (req: Request, res: Response, next) => {
       ...user,
       ...req.body,
     };
-
-    console.log('##################################');
-    console.log(updatedUser);
-    console.log('##################################');
-
-    res.send(updatedUser);
+    res.status(204).send(updatedUser);
   } else {
     res.status(404).send({ message: `There no user with id: ${id}` });
   }
 
   next();
+});
+
+router.delete('/:id', (req: Request, res: Response, next) => {
+  const { id } = req.params;
+  const user = users.find((user) => user.id === +id);
+
+  if (!user) {
+    res.status(404).send({ message: 'there no such user' });
+  } else {
+    user.isDeleted = true;
+    console.log(`User ${user.login} was deleted`);
+    res.status(204).send();
+  }
 });
 
 export default router;
