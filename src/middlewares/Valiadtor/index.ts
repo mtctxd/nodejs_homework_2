@@ -3,7 +3,7 @@ import {
     ServerCallback,
   ValidatorMethods,
   ValidatorOptions,
-} from '../../../types';
+} from '../../types';
 
 class Validator<T> {
   private method: ValidatorMethods<T>;

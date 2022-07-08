@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response, Router } from 'express';
 import { send } from 'process';
-import { User } from '../../../types';
+import { User } from '../../types';
 import Joi from 'joi';
 import Validator from '../../middlewares/Valiadtor';
 import { processUserQueryString } from './features/processUserQueryString';
