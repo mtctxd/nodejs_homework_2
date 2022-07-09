@@ -1,11 +1,13 @@
 import { NextFunction, Request, Response } from 'express';
+import Joi from 'joi';
 import {
     ServerCallback,
+  User,
   ValidatorMethods,
   ValidatorOptions,
 } from '../../types';
 
-class Validator<T> {
+export class Validator<T> {
   private method: ValidatorMethods<T>;
 
   constructor(options: ValidatorOptions<T>) {
@@ -59,4 +61,21 @@ class Validator<T> {
   }
 }
 
-export default Validator;
+const userValidator = new Validator<User>({
+  create: Joi.object().keys({
+    login: Joi.string().min(6).max(18).required(),
+    password: Joi.string().min(6).max(32).required(),
+    age: Joi.number().min(7).max(110).required(),
+  }),
+  update: Joi.object().keys({
+    id: Joi.number().integer().required(),
+    login: Joi.string().min(6).max(18),
+    password: Joi.string().min(6).max(32),
+    age: Joi.number().min(7).max(110),
+  }),
+  delete: Joi.object().keys({
+    id: Joi.number().integer().required()
+  })
+});
+
+export default userValidator;

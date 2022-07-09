@@ -9,14 +9,17 @@ export interface User {
   isDeleted: boolean;
 }
 
+// ??????
 export type ValidatorOptions<T> = {
   create?: Joi.ObjectSchema<T>;
   update?: Joi.ObjectSchema<T>;
+  delete?: Joi.ObjectSchema<T>;
 };
 
 export type ValidatorMethods<T> = {
   create?: Joi.ObjectSchema<T>;
   update?: Joi.ObjectSchema<T>;
+  delete?: Joi.ObjectSchema<T>;
 };
 
 export type ServerCallback =  {

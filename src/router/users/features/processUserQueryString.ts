@@ -1,5 +1,4 @@
 import { User } from '../../../types';
-import { users } from '../index';
 
 /**
  * Process info array and apply changes to it
@@ -9,10 +8,11 @@ import { users } from '../index';
  */
 
 export function processUserQueryString(
+  itesToProcess: User[],
   loginSubscring: string = '',
   limit: string = '10'
 ): User[] {
-  let result = [...users];
+  let result = [...itesToProcess];
 
   if (loginSubscring) {
     result = result
