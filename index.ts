@@ -27,24 +27,60 @@ const startBase = async () => {
 };
 startBase();
 
-const User = sequelize.define('User', {
-  user_id: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
+const User = sequelize.define(
+  'User',
+  {
+    user_id: {
+      type: DataTypes.INTEGER,
+    },
+    login: {
+      type: DataTypes.STRING,
+    },
+    password: {
+      type: DataTypes.STRING,
+    },
+    is_deleted: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
   },
-  login: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  password: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  is_deleted: {
-    type: DataTypes.BOOLEAN,
-    defaultValue: false,
-  },
-});
+  {
+    modelName: 'User',
+  }
+);
+
+const manageBase = async () => {
+  try {
+    const result = await sequelize.sync({ force: true });
+    // console.log('result of syncing:_______ ', result);
+  } catch (e) {
+    console.error('User sync error:________ ', e);
+  }
+};
+
+const createUser = async (user_id: number) => {
+  try {
+    const result = await User.create({ user_id });
+
+    console.log('result of creating____', result);
+  } catch (error) {
+    console.error('Error of creating_______', error);
+  }
+};
+
+const initBase = async () => {
+  try {
+    await manageBase();
+    await createUser(Number(Math.random().toFixed()));
+    console.log('initBase is done______________');
+  } catch (error) {
+    console.error(error);
+  } finally {
+    await User.findAll();
+  }
+};
+
+initBase();
 
 const app: Express = express();
 const port = process.env.PORT;
