@@ -1,4 +1,4 @@
-import { User } from '../../../types';
+import { User } from '../types';
 
 /**
  * Process info array and apply changes to it

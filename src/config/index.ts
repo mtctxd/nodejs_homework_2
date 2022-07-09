@@ -3,13 +3,16 @@ import { Options } from 'sequelize/types';
 
 dotenv.config();
 
-export const dbConfig = [
-  'user',
-  'postgres',
-  process.env.USER_DB_PASSWORD!.toString(),
-  {
-    host: 'localhost',
-    dialect: 'postgres',
-  },
-] as Options[];
+export const dbConfig = {
+  host: 'localhost',
+  database: 'node_mentoring_user',
+  dialect: 'postgres',
+  username: 'postgres',
+  password: process.env.USER_DB_PASSWORD,
+  pool: {
+    max: 5,
+    min: 0,
+    idle: 10000,
+  }
+}
 

@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from 'express';
-import { getMaxId } from '../../../features/getMaxId';
-import userValidator, { Validator } from '../../../middlewares/Valiadtor';
-import { processUserQueryString } from '../../../router/users/features/processUserQueryString';
-import { User } from '../../../types';
+import { getMaxId } from '../../features/getMaxId';
+import userValidator, { Validator } from '../../middlewares/Valiadtor';
+import { processUserQueryString } from '../../features/processUserQueryString';
+import { User } from '../../types';
 
 export const users: User[] = [
   { id: 1, age: 18, isDeleted: false, login: 'Romka', password: 'RRRpassword' },
@@ -69,7 +69,7 @@ class UserController {
     return [
       this.validator.validate('update'),
       (req: Request, res: Response) => {
-        const { id } = req.body;
+        const { id } = req.params;
         let user = users.find((user) => user.id === +id);
 
         if (user) {
@@ -87,14 +87,14 @@ class UserController {
 
   deleteUser() {
     return (req: Request, res: Response) => {
-      const { id } = req.body;
+      const { id } = req.params;
       const user = users.find((user) => user.id === +id);
+      console.log(req);
 
-      if (!user) {
+      if (!!!user) {
         res.status(404).send({ message: 'there no such user' });
       } else {
         user.isDeleted = true;
-        console.log(user);
         res.status(204).send();
       }
     };

@@ -2,11 +2,20 @@ import express, { Express, Request, Response } from 'express';
 import dotenv from 'dotenv';
 import router from './src/router/users';
 import { dbConfig } from './src/config';
-import { Options, Sequelize } from 'sequelize';
+import { Options, Sequelize, DataTypes, Dialect } from 'sequelize';
 
 dotenv.config();
 
-const sequelize = new Sequelize(...dbConfig);
+const sequelize = new Sequelize(
+  dbConfig.database,
+  dbConfig.username,
+  dbConfig.password,
+  {
+    host: dbConfig.host,
+    dialect: dbConfig.dialect as Dialect | undefined,
+    pool: dbConfig.pool,
+  }
+);
 
 const startBase = async () => {
   try {
@@ -16,31 +25,26 @@ const startBase = async () => {
     console.error('Unable to connect to the database:', error);
   }
 };
-
 startBase();
 
-// id: Joi.number().integer().required(),
-// login: Joi.string().min(6).max(18),
-// password: Joi.string().min(6).max(32),
-// age: Joi.number().min(7).max(110),
-
-// id: number;
-// login: string;
-// password: string;
-// age: number;
-// isDeleted: boolean;
-
-// const User = sequelize.define('testUsers', {
-//   // login: { type: Sequelize.STRING, allowNull: false },
-//   // password: { type: Sequelize.STRIGN, allowNull: false },
-//   // age: { type: Sequelize.INTEGER, allowNull: false},
-//   // isDeleted: {type: Sequelize.BOOLEAN, allowNull: false, defaultValue: false}
-//   name: {type: Sequelize.STRING}
-// });
-
-// User.create({
-//   name: 'romka'
-// })
+const User = sequelize.define('User', {
+  user_id: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+  login: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  password: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  is_deleted: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
+  },
+});
 
 const app: Express = express();
 const port = process.env.PORT;

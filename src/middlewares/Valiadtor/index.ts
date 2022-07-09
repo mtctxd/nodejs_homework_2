@@ -68,14 +68,10 @@ const userValidator = new Validator<User>({
     age: Joi.number().min(7).max(110).required(),
   }),
   update: Joi.object().keys({
-    id: Joi.number().integer().required(),
     login: Joi.string().min(6).max(18),
     password: Joi.string().min(6).max(32),
     age: Joi.number().min(7).max(110),
   }),
-  delete: Joi.object().keys({
-    id: Joi.number().integer().required()
-  })
 });
 
 export default userValidator;
