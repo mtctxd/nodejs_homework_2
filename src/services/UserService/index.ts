@@ -1,4 +1,5 @@
-import e from 'express';
+import { where } from 'sequelize/types';
+import userModel from '../../models/userModel';
 import { User } from '../../types/index';
 
 const mockUsers: User[] = [
@@ -35,48 +36,58 @@ const mockUsers: User[] = [
 export class UserService {
   constructor() {}
 
-  public getAll() {
-    return mockUsers;
+  public async getAll() {
+    return await userModel.findAll();
   }
 
-  public getById(id: string) {
-    return mockUsers.find((user) => user.id === id);
+  public async getById(id: string) {
+    return await userModel.findByPk(id);
   }
 
-  public createUser(userInfo: Partial<User>) {
+  public async createUser(userInfo: Partial<User>) {
     const { login, age, password } = userInfo;
-
-    return {
-      id: mockUsers.length + 1 + '',
+    const newUser = await userModel.create({
       login,
-      password,
       age,
-      isDeleted: false,
-    };
+      password,
+    });
+
+    return newUser;
   }
 
-  public updateUser(id: string, userInfo: Partial<User>) {
-    const matchedUser = mockUsers.find((user) => user.id === id);
+  public async updateUser(id: string, userInfo: Partial<User>) {
     const { login, password, age } = userInfo;
-    if (!matchedUser) {
-      return null;
-    } else {
-      return {
-        ...matchedUser,
-        login: login || matchedUser.login,
-        password: password || matchedUser.password,
-        age: age || matchedUser.age,
-      };
+
+    try {
+      await userModel.update(
+        { login, password, age },
+        {
+          where: {
+            id,
+          },
+        }
+      );
+
+      return await this.getById(id);
+    } catch (error) {
+      return { messege: 'server error: ', error };
     }
   }
 
-  public deleteUser(id: string) {
-    const matchedUser = mockUsers.find((user) => user.id === id);
-    if (!matchedUser) {
-      return null;
-    } else {
-      matchedUser.isDeleted = true;
-      return matchedUser;
+  public async deleteUser(id: string) {
+    try {
+      await userModel.update(
+        { is_deleted: true },
+        {
+          where: {
+            id,
+          },
+        }
+      );
+
+      return await this.getById(id);
+    } catch (error) {
+      return { messege: 'server error: ', error };
     }
   }
 }
