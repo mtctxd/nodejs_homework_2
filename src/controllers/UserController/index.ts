@@ -1,105 +1,56 @@
 import * as express from 'express';
-
-const mockUsers: User[] = [
-  {
-    id: '1',
-    login: 'romka',
-    password: 'passwordRomka',
-    age: 15,
-    isDeleted: false,
-  },
-  {
-    id: '2',
-    login: 'sashka',
-    password: 'passwordSashka',
-    age: 19,
-    isDeleted: false,
-  },
-  {
-    id: '3',
-    login: 'dashka',
-    password: 'passwordDashka',
-    age: 25,
-    isDeleted: false,
-  },
-  {
-    id: '4',
-    login: 'john',
-    password: 'passwordJohn',
-    age: 90,
-    isDeleted: false,
-  },
-];
+import UserService from '../../services/UserService';
 
 class UserController {
-  constructor() {}
-
-  getAll(req: express.Request, res: express.Response) {
-    const users = mockUsers;
-    res.send(users);
+  private userService: UserService;
+  constructor(userService: UserService) {
+    this.userService = userService;
   }
 
-  getById(req: express.Request, res: express.Response) {
-    const { id }: Partial<User> = req.params;
+  public getAll = (req: express.Request, res: express.Response) => {
+    const users = this.userService.getAll();
 
-    const matchedUser = mockUsers.find((user) => user.id === id);
+    res.send(users);
+  };
+
+  public getById = (req: express.Request, res: express.Response) => {
+    const matchedUser = this.userService.getById(req.params.id);
 
     if (matchedUser) {
       res.send(matchedUser);
     } else {
       res.status(404).send({ message: 'not found' });
     }
-  }
+  };
 
-  createUser(req: express.Request, res: express.Response) {
-    const { login, password, age }: Partial<User> = req.body;
-
-    const newUser: Partial<User> = {
-      id: mockUsers.length + 1 + '',
-      login,
-      password,
-      age,
-      isDeleted: false,
-    };
+  public createUser = (req: express.Request, res: express.Response) => {
+    const newUser = this.userService.createUser(req.body);
 
     res.status(202).send(newUser);
-  }
+  };
 
-  updateUser(req: express.Request, res: express.Response) {
-    const { id } = req.params;
-    const { login, password, age }: Partial<User> = req.body;
+  public updateUser = (req: express.Request, res: express.Response) => {
+    const newUser = this.userService.updateUser(req.params.id, req.body);
 
-    const matchedUser = mockUsers.find((user) => user.id === id);
-
-
-    if (matchedUser) {
-      const newUser = {
-        ...matchedUser,
-        login: login || matchedUser.login,
-        password: password || matchedUser.password,
-        age: age || matchedUser.age,
-      };
-      
+    if (newUser) {
       res.status(202).send(newUser);
     } else {
       res.status(404).send({ message: 'not found' });
     }
-  }
+  };
 
-  deleteUser(req: express.Request, res: express.Response) {
-    const { id }: Partial<User> = req.params;
+  public deleteUser = (req: express.Request, res: express.Response) => {
+    const deletedUser = this.userService.deleteUser(req.params.id);
 
-    const matchedUser = mockUsers.find((user) => user.id === id);
-
-    if (matchedUser) {
-      matchedUser.isDeleted = true;
-      res.send(matchedUser);
+    if (deletedUser) {
+      res.send(deletedUser);
     } else {
       res.status(404).send({ message: 'not found' });
     }
   }
 }
 
-const userCotroller = new UserController();
+const userService = new UserService();
+const userCotroller = new UserController(userService);
 
 export default userCotroller;

@@ -1,7 +1,9 @@
-import { Application, Router } from "express";
+import { Router } from "express";
 import userCotroller from "../../../controllers/userController";
+import UserController from "../../../controllers/userController";
 
 const userRouter = Router();
+
 
 userRouter.get('/', userCotroller.getAll);
 userRouter.get('/:id', userCotroller.getById);
