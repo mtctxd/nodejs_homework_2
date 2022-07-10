@@ -1,12 +1,12 @@
 import dotenv from 'dotenv';
-import { Options } from 'sequelize/types';
+import { Dialect } from 'sequelize/types';
 
 dotenv.config();
 
 export const dbConfig = {
   host: 'localhost',
   database: 'node_mentoring_user',
-  dialect: 'postgres',
+  dialect: 'postgres' as Dialect | undefined,
   username: 'postgres',
   password: process.env.USER_DB_PASSWORD,
   pool: {
@@ -14,5 +14,9 @@ export const dbConfig = {
     min: 0,
     idle: 10000,
   }
+}
+
+export const appConfig = {
+  port: process.env.PORT || 3000,
 }
 

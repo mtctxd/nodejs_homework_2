@@ -1,106 +1,105 @@
-import { NextFunction, Request, Response } from 'express';
-import { getMaxId } from '../../features/getMaxId';
-import userValidator, { Validator } from '../../middlewares/Valiadtor';
-import { processUserQueryString } from '../../features/processUserQueryString';
-import { User } from '../../types';
+import * as express from 'express';
 
-export const users: User[] = [
-  { id: 1, age: 18, isDeleted: false, login: 'Romka', password: 'RRRpassword' },
-  { id: 2, age: 18, isDeleted: false, login: 'romka', password: 'password' },
-  { id: 3, age: 9, isDeleted: true, login: 'ilone', password: 'ilona1234' },
+const mockUsers: User[] = [
   {
-    id: 4,
-    age: 55,
+    id: '1',
+    login: 'romka',
+    password: 'passwordRomka',
+    age: 15,
     isDeleted: false,
-    login: 'dua',
-    password: 'paDKA',
   },
-  { id: 5, age: 99, isDeleted: false, login: 'saa', password: 's23' },
+  {
+    id: '2',
+    login: 'sashka',
+    password: 'passwordSashka',
+    age: 19,
+    isDeleted: false,
+  },
+  {
+    id: '3',
+    login: 'dashka',
+    password: 'passwordDashka',
+    age: 25,
+    isDeleted: false,
+  },
+  {
+    id: '4',
+    login: 'john',
+    password: 'passwordJohn',
+    age: 90,
+    isDeleted: false,
+  },
 ];
 
 class UserController {
-  private validator: Validator<User>;
+  constructor() {}
 
-  constructor(validator: Validator<User>) {
-    this.validator = validator;
+  getAll(req: express.Request, res: express.Response) {
+    const users = mockUsers;
+    res.send(users);
   }
 
-  getAll() {
-    return (req: Request, res: Response) => {
-      const login = req.query.login as string;
-      const limit = req.query.limit as string;
-      res.send(processUserQueryString(users, login, limit));
+  getById(req: express.Request, res: express.Response) {
+    const { id }: Partial<User> = req.params;
+
+    const matchedUser = mockUsers.find((user) => user.id === id);
+
+    if (matchedUser) {
+      res.send(matchedUser);
+    } else {
+      res.status(404).send({ message: 'not found' });
+    }
+  }
+
+  createUser(req: express.Request, res: express.Response) {
+    const { login, password, age }: Partial<User> = req.body;
+
+    const newUser: Partial<User> = {
+      id: mockUsers.length + 1 + '',
+      login,
+      password,
+      age,
+      isDeleted: false,
     };
+
+    res.status(202).send(newUser);
   }
 
-  getById() {
-    return (req: Request, res: Response) => {
-      const { id } = req.params;
-      let result = users.find((user) => user.id === +id);
+  updateUser(req: express.Request, res: express.Response) {
+    const { id } = req.params;
+    const { login, password, age }: Partial<User> = req.body;
 
-      if (!result) {
-        res.status(404).send({ message: `There no user with id: ${id}` });
-      } else {
-        res.status(200).send(result);
-      }
-    };
+    const matchedUser = mockUsers.find((user) => user.id === id);
+
+
+    if (matchedUser) {
+      const newUser = {
+        ...matchedUser,
+        login: login || matchedUser.login,
+        password: password || matchedUser.password,
+        age: age || matchedUser.age,
+      };
+      
+      res.status(202).send(newUser);
+    } else {
+      res.status(404).send({ message: 'not found' });
+    }
   }
 
-  createUser() {
-    return [
-      this.validator.validate('create'),
-      (req: Request, res: Response) => {
-        const { password, login, age } = req.body;
+  deleteUser(req: express.Request, res: express.Response) {
+    const { id }: Partial<User> = req.params;
 
-        const newUser: User = {
-          id: getMaxId(users),
-          password,
-          isDeleted: false,
-          login,
-          age,
-        };
+    const matchedUser = mockUsers.find((user) => user.id === id);
 
-        res.status(201).send(newUser);
-      },
-    ];
-  }
-
-  updateUser() {
-    return [
-      this.validator.validate('update'),
-      (req: Request, res: Response) => {
-        const { id } = req.params;
-        let user = users.find((user) => user.id === +id);
-
-        if (user) {
-          const updatedUser = {
-            ...user,
-            ...req.body,
-          };
-          res.status(204).send(updatedUser);
-        } else {
-          res.status(404).send({ message: `There no user with id: ${id}` });
-        }
-      },
-    ];
-  }
-
-  deleteUser() {
-    return (req: Request, res: Response) => {
-      const { id } = req.params;
-      const user = users.find((user) => user.id === +id);
-      console.log(req);
-
-      if (!!!user) {
-        res.status(404).send({ message: 'there no such user' });
-      } else {
-        user.isDeleted = true;
-        res.status(204).send();
-      }
-    };
+    if (matchedUser) {
+      matchedUser.isDeleted = true;
+      res.send(matchedUser);
+    } else {
+      res.status(404).send({ message: 'not found' });
+    }
   }
 }
 
-const userControler = new UserController(userValidator);
+const userCotroller = new UserController();
 
-export default userControler;
+export default userCotroller;
