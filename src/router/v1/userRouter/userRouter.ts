@@ -5,18 +5,20 @@ import userValidator from '../../../middlewares/validator';
 
 const userRouter = Router();
 
-userRouter.get('/', userCotroller.getAll);
-userRouter.get('/:id', userCotroller.getById);
-userRouter.post(
-  '/',
-  userValidator.validate('create'),
-  userCotroller.createUser
-);
-userRouter.put(
-  '/:id',
-  userValidator.validate('update'),
-  userCotroller.updateUser
-);
-userRouter.delete('/:id', userCotroller.deleteUser);
+(async () => {
+  userRouter.get('/', userCotroller.getAll);
+  userRouter.get('/:id', userCotroller.getById);
+  userRouter.post(
+    '/',
+    await userValidator.validate('create'),
+    userCotroller.createUser
+  );
+  userRouter.put(
+    '/:id',
+    await userValidator.validate('update'),
+    userCotroller.updateUser
+  );
+  userRouter.delete('/:id', userCotroller.deleteUser);
+})();
 
 export default userRouter;
