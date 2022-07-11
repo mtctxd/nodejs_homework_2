@@ -1,5 +1,5 @@
-import { where } from 'sequelize/types';
-import userModel from '../../models/userModel';
+import { Request } from 'express';
+import { Op } from 'sequelize';
 import { User, UserModel } from '../../types/index';
 
 export class UserService {
@@ -8,8 +8,23 @@ export class UserService {
     this.model = model;
   }
 
-  public async getAll() {
-    return await this.model.findAll();
+  public async getAll(req: Request) {
+    const { limit, login } = req.query;
+
+    if (login) {
+      return await this.model.findAll({
+        limit: Number(limit) || 10,
+        where: {
+          login: {
+            [Op.iLike]: '%' + login + '%',
+          },
+        },
+      });
+    } else {
+      return await this.model.findAll({
+        limit: Number(limit) || 10,
+      });
+    }
   }
 
   public async getById(id: string) {
