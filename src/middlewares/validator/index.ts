@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from 'express';
+import { NextFunction, Request, RequestHandler, Response } from 'express';
 import Joi, { valid } from 'joi';
 import userModel from '../../models/userModel';
 import { UserModel } from '../../types';
@@ -38,35 +38,44 @@ const userValidationsSchemas = {
 class Validator {
   private schema: typeof userValidationsSchemas;
   private model: UserModel;
-  private currentValidationType: keyof typeof userValidationsSchemas | '';
 
   constructor(schema: typeof userValidationsSchemas, model: UserModel) {
     this.schema = schema;
-    this.model = userModel;
-    this.currentValidationType = '';
+    this.model = model;
   }
 
-  private validationMaker =
-    async (validationMethod: Joi.ObjectSchema) =>
-    async (req: Request, res: Response, next: NextFunction) => {
+  private validateBody =
+    (validationMethod: Joi.ObjectSchema) =>
+    (req: Request, res: Response, next: NextFunction) => {
       const validationResult = validationMethod.validate(req.body);
 
       if (validationResult.error) {
         const message = this.makeErrorMessages(validationResult.error);
+
         res.status(400).send(message);
       } else {
-        const existingStatus = await this.doUserExistAlready(req.body.login);
-
-        if (existingStatus || this.currentValidationType === 'create') {
-          res.status(400).send({ message: 'this login already used' });
-        } else {
-          next();
-        }
+        next();
       }
     };
 
+  private validateIfExist = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    const isUserExist = await this.doUserExistAlready(req.body.login);
+
+    if (isUserExist) {
+      res.status(400).send({ message: 'this login already used' });
+    } else {
+      next();
+    }
+  };
+
   private makeErrorMessages = ({ details }: Joi.ValidationError) => {
-    return details.map(({ message }) => message);
+    return {
+      message: details.map(({ message }) => message),
+    };
   };
 
   private doUserExistAlready = async (login: string) => {
@@ -80,15 +89,12 @@ class Validator {
   };
 
   public validate = async (validationType: keyof typeof this.schema) => {
-    this.currentValidationType = validationType;
-    console.log(this.currentValidationType);
-
     switch (validationType) {
       case 'create':
-        return await this.validationMaker(this.schema.create);
+        return [this.validateBody(this.schema.create), this.validateIfExist];
 
       case 'update':
-        return await this.validationMaker(this.schema.update);
+        return this.validateBody(this.schema.update);
 
       default:
         return (req: Request, res: Response, next: NextFunction) => {
