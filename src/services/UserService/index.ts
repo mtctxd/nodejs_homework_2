@@ -1,52 +1,24 @@
 import { where } from 'sequelize/types';
 import userModel from '../../models/userModel';
-import { User } from '../../types/index';
-
-const mockUsers: User[] = [
-  {
-    id: '1',
-    login: 'romka',
-    password: 'passwordRomka',
-    age: 15,
-    isDeleted: false,
-  },
-  {
-    id: '2',
-    login: 'sashka',
-    password: 'passwordSashka',
-    age: 19,
-    isDeleted: false,
-  },
-  {
-    id: '3',
-    login: 'dashka',
-    password: 'passwordDashka',
-    age: 25,
-    isDeleted: false,
-  },
-  {
-    id: '4',
-    login: 'john',
-    password: 'passwordJohn',
-    age: 90,
-    isDeleted: false,
-  },
-];
+import { User, UserModel } from '../../types/index';
 
 export class UserService {
-  constructor() {}
+  private model: UserModel;
+  constructor(model: UserModel) {
+    this.model = model;
+  }
 
   public async getAll() {
-    return await userModel.findAll();
+    return await this.model.findAll();
   }
 
   public async getById(id: string) {
-    return await userModel.findByPk(id);
+    return await this.model.findByPk(id);
   }
 
   public async createUser(userInfo: Partial<User>) {
     const { login, age, password } = userInfo;
-    const newUser = await userModel.create({
+    const newUser = await this.model.create({
       login,
       age,
       password,
@@ -59,7 +31,7 @@ export class UserService {
     const { login, password, age } = userInfo;
 
     try {
-      await userModel.update(
+      await this.model.update(
         { login, password, age },
         {
           where: {
@@ -76,7 +48,7 @@ export class UserService {
 
   public async deleteUser(id: string) {
     try {
-      await userModel.update(
+      await this.model.update(
         { is_deleted: true },
         {
           where: {

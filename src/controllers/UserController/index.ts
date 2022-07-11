@@ -1,4 +1,5 @@
 import * as express from 'express';
+import userModel from '../../models/userModel';
 import UserService from '../../services/UserService';
 
 class UserController {
@@ -54,7 +55,7 @@ class UserController {
   };
 }
 
-const userService = new UserService();
+const userService = new UserService(userModel);
 const userCotroller = new UserController(userService);
 
 export default userCotroller;
