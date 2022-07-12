@@ -1,5 +1,5 @@
 import { DataTypes } from 'sequelize';
-import { userDB } from '../loaders/userDb';
+import { userDB } from '../../loaders/userDb';
 
 const userModel = userDB.define(
   'user',

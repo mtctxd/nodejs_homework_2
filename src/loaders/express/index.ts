@@ -1,8 +1,8 @@
-import * as express from 'express';
-import groupRouter from '../../router/v1/groupRouter/groupRouter';
-import userRouter from '../../router/v1/userRouter/userRouter';
+import express, { Application, NextFunction, Request, Response } from 'express';
+import groupRouter from '../../v1/router/groupRouter';
+import userRouter from '../../v1/router/userRouter';
 
-const startExpress = async (app: express.Application) => {
+const startExpress = async (app: Application) => {
   app.use(express.json());
   app.use('/v1/user', userRouter);
   app.use('/v1/group', groupRouter)

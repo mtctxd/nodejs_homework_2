@@ -1,5 +1,3 @@
-import e, { Request, Response, NextFunction } from 'express';
-import Joi from 'joi';
 import userModel from '../../models/userModel';
 import { User, UserModel, ValidationOptions } from '../../types';
 import { validationShcemes } from './schemes';

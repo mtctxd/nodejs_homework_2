@@ -1,5 +1,6 @@
 import { Router } from 'express';
-import { groupController } from '../../../controllers';
+import { groupController } from '../controllers/Controller';
+import { groupValidator } from '../middlewares/validator/GroupValidator';
 
 const groupRouter = Router();
 
@@ -8,12 +9,12 @@ const groupRouter = Router();
   groupRouter.get('/:id', groupController.getById);
   groupRouter.post(
     '/',
-    // await userValidator.validate('create'),
+    await groupValidator.validate('create'),
     groupController.createUser
   );
   groupRouter.put(
     '/:id',
-    // await userValidator.validate('update'),
+    await groupValidator.validate('update'),
     groupController.updateUser
   );
   groupRouter.delete('/:id', groupController.deleteUser);

@@ -2,10 +2,12 @@ import Joi, { string } from 'joi';
 import groupModel from '../models/groupModel';
 import userModel from '../models/userModel';
 
-export type Premission = 'READ' | 'WRITE' | 'DELETE' | 'SHARE' | 'UPLOAD_FILES';
+export const premisionTypes = ['READ', 'WRITE', 'DELETE', 'SHARE', 'UPLOAD_FILES'] as const;
+
+export type Premission = typeof premisionTypes[number];
 
 export interface User {
-  id: string;
+  user_id: string;
   login: string;
   password: string;
   age: number;
@@ -19,14 +21,14 @@ export enum HTTPMethod {
 }
 
 export type Group = {
-  id: string;
+  group_id: string;
   name: string;
   premissions: Array<Premission>;
 };
 
 export type ValidationOptions<T> = {
-  uniqueField: T
-}
+  uniqueField: T;
+};
 
 export type JoiValidatinosSchema<T> = Partial<
   Record<HTTPMethod, Joi.ObjectSchema<T>>

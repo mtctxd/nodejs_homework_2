@@ -1,3 +1,4 @@
+import groupModel from '../../models/groupModel';
 import userModel from '../../models/userModel';
 import { Group, UserModel, ValidationOptions } from '../../types';
 import { validationShcemes } from './schemes';
@@ -16,7 +17,7 @@ class GroupValidator<
 
 export const groupValidator = new GroupValidator(
   groupValidationsSchema,
-  userModel,
+  groupModel,
   {
     uniqueField: 'name',
   }

@@ -12,9 +12,9 @@ class Controller<T extends UserService<UserModel> | GroupService<GroupModel>> {
   }
 
   public getAll = async (req: Request, res: Response) => {
-    const users = await this.service.getAll(req);
+    const items = await this.service.getAll(req);
 
-    res.send(users);
+    res.send(items);
   };
 
   public getById = async (req: Request, res: Response) => {
@@ -29,41 +29,42 @@ class Controller<T extends UserService<UserModel> | GroupService<GroupModel>> {
 
   public createUser = async (req: Request, res: Response) => {
     try {
-      const newUser = await this.service.create(req.body);
+      const newItem = await this.service.create(req.body);
 
-      res.status(202).send(newUser);
+      res.status(202).send(newItem);
     } catch (error) {
       res.status(500).send({ message: 'server error: ' + error });
     }
   };
 
   public updateUser = async (req: Request, res: Response) => {
-    const newUser = await this.service.update(req.params.id, req.body);
+    const newItem = await this.service.update(req.params.id, req.body);
 
-    if (newUser) {
-      res.status(202).send(newUser);
+    if (newItem) {
+      res.status(202).send(newItem);
     } else {
       res.status(404).send({ message: 'not found' });
     }
   };
 
   public deleteUser = async (req: Request, res: Response) => {
-    const deletedUser = await this.service.delete(req.params.id);
+    try {
+      const deletedUser = await this.service.delete(req.params.id);
 
-    if (deletedUser) {
-      res.send(deletedUser);
-    } else {
-      res.status(404).send({ message: 'not found' });
+      if (deletedUser) {
+        res.send(deletedUser);
+      } else {
+        res.status(404).send({ message: 'not found' });
+      }
+    } catch (e) {
+      console.error(e);
+      res.status(500).send({ message: 'server error: ', e });
     }
   };
 }
 
-const userService = new UserService(userModel);
-export const userController = new Controller<UserService<UserModel>>(
-  userService
-);
+export const userController = new Controller(new UserService(userModel));
 
-const groupService = new GroupService(groupModel);
-export const groupController = new Controller<GroupService<GroupModel>>(
-  groupService
-);
+export const groupController = new Controller(new GroupService(groupModel));
+
+export default Controller;

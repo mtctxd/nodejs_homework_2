@@ -1,13 +1,18 @@
 import { NextFunction, Request, Response } from 'express';
 import Joi from 'joi';
-import userModel from '../../models/userModel';
-import { Group, User, UserModel, ValidationOptions } from '../../types';
+import {
+  Group,
+  GroupModel,
+  User,
+  UserModel,
+  ValidationOptions,
+} from '../../types';
+
 import { ValidatorSchema } from './schemes';
-import { userValidationsSchema } from './schemes/userSchema';
 
 class Validator<
   T extends ValidatorSchema,
-  M extends UserModel,
+  M extends UserModel | GroupModel,
   U extends ValidationOptions<keyof User | keyof Group>
 > {
   public schema: T;
@@ -19,9 +24,8 @@ class Validator<
     this.model = model;
 
     if (options?.uniqueField) {
-        this.uniqueField = options?.uniqueField;
+      this.uniqueField = options?.uniqueField;
     }
-
   }
 
   private validateBody =
@@ -71,7 +75,6 @@ class Validator<
   };
 
   public validate = async (validationType: keyof typeof this.schema) => {
-
     switch (validationType) {
       case 'create':
         if (this.uniqueField) {
