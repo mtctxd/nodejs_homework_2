@@ -1,4 +1,5 @@
 import Joi, { string } from 'joi';
+import groupModel from '../models/groupModel';
 import userModel from '../models/userModel';
 
 export type Premission = 'READ' | 'WRITE' | 'DELETE' | 'SHARE' | 'UPLOAD_FILES';
@@ -32,3 +33,5 @@ export type JoiValidatinosSchema<T> = Partial<
 >;
 
 export type UserModel = typeof userModel;
+export type GroupModel = typeof groupModel;
+export type Models = UserModel | GroupModel;

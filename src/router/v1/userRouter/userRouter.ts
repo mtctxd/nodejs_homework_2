@@ -1,23 +1,23 @@
 import { Router } from 'express';
-import userCotroller from '../../../controllers/userController';
+import { userController } from '../../../controllers';
 import { userValidator } from '../../../middlewares/validator/UserValidator';
 
 const userRouter = Router();
 
 (async () => {
-  userRouter.get('/', userCotroller.getAll);
-  userRouter.get('/:id', userCotroller.getById);
+  userRouter.get('/', userController.getAll);
+  userRouter.get('/:id', userController.getById);
   userRouter.post(
     '/',
     await userValidator.validate('create'),
-    userCotroller.createUser
+    userController.createUser
   );
   userRouter.put(
     '/:id',
     await userValidator.validate('update'),
-    userCotroller.updateUser
+    userController.updateUser
   );
-  userRouter.delete('/:id', userCotroller.deleteUser);
+  userRouter.delete('/:id', userController.deleteUser);
 })();
 
 export default userRouter;

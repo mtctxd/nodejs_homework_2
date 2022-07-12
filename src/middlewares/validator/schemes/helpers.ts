@@ -1,5 +1,5 @@
 import Joi from 'joi';
-import { validationShcemes, ValidatorSchema } from '.';
+import { ValidatorSchema } from '.';
 
 export const makeFieldsRequired: any = (
   scheme: ValidatorSchema

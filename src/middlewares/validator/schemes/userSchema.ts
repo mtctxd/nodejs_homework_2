@@ -1,5 +1,5 @@
 import Joi from 'joi';
-import { makeFieldsRequired } from '../helpers';
+import { makeFieldsRequired } from './helpers';
 
 const passwordRules = {
   errorMessage:

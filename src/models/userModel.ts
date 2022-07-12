@@ -1,9 +1,13 @@
 import { DataTypes } from 'sequelize';
-import { userDB } from '../../loaders/userDb';
+import { userDB } from '../loaders/userDb';
 
 const userModel = userDB.define(
   'user',
   {
+    user_id: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
     login: {
       type: DataTypes.STRING,
       allowNull: false,

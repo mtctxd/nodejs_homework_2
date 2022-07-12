@@ -1,21 +1,24 @@
 import { Request, Response } from 'express';
-import userModel from '../../models/userModel';
-import UserService from '../../services/UserService';
+import groupModel from '../models/groupModel';
+import userModel from '../models/userModel';
+import GroupService from '../services/GroupService';
+import UserService from '../services/UserService';
+import { GroupModel, UserModel } from '../types';
 
-class UserController {
-  private userService: UserService;
-  constructor(userService: UserService) {
-    this.userService = userService;
+class Controller<T extends UserService<UserModel> | GroupService<GroupModel>> {
+  private service: T;
+  constructor(service: T) {
+    this.service = service;
   }
 
   public getAll = async (req: Request, res: Response) => {
-    const users = await this.userService.getAll(req);
+    const users = await this.service.getAll(req);
 
     res.send(users);
   };
 
   public getById = async (req: Request, res: Response) => {
-    const matchedUser = await this.userService.getById(req.params.id);
+    const matchedUser = await this.service.getById(req.params.id);
 
     if (matchedUser) {
       res.send(matchedUser);
@@ -26,7 +29,7 @@ class UserController {
 
   public createUser = async (req: Request, res: Response) => {
     try {
-      const newUser = await this.userService.createUser(req.body);
+      const newUser = await this.service.create(req.body);
 
       res.status(202).send(newUser);
     } catch (error) {
@@ -35,7 +38,7 @@ class UserController {
   };
 
   public updateUser = async (req: Request, res: Response) => {
-    const newUser = await this.userService.updateUser(req.params.id, req.body);
+    const newUser = await this.service.update(req.params.id, req.body);
 
     if (newUser) {
       res.status(202).send(newUser);
@@ -45,7 +48,7 @@ class UserController {
   };
 
   public deleteUser = async (req: Request, res: Response) => {
-    const deletedUser = await this.userService.deleteUser(req.params.id);
+    const deletedUser = await this.service.delete(req.params.id);
 
     if (deletedUser) {
       res.send(deletedUser);
@@ -56,6 +59,11 @@ class UserController {
 }
 
 const userService = new UserService(userModel);
-const userCotroller = new UserController(userService);
+export const userController = new Controller<UserService<UserModel>>(
+  userService
+);
 
-export default userCotroller;
+const groupService = new GroupService(groupModel);
+export const groupController = new Controller<GroupService<GroupModel>>(
+  groupService
+);

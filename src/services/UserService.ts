@@ -1,11 +1,12 @@
 import { Request } from 'express';
 import { Op } from 'sequelize';
-import { User, UserModel } from '../../types/index';
+import { User, UserModel } from '../types/index';
+import { v4 as uuid } from 'uuid';
+import Service from './Service';
 
-export class UserService {
-  private model: UserModel;
-  constructor(model: UserModel) {
-    this.model = model;
+class UserService<T extends UserModel> extends Service<T> {
+  constructor(model: T) {
+    super(model)
   }
 
   public async getAll(req: Request) {
@@ -31,9 +32,10 @@ export class UserService {
     return await this.model.findByPk(id);
   }
 
-  public async createUser(userInfo: Partial<User>) {
+  public async create(userInfo: Partial<User>) {
     const { login, age, password } = userInfo;
     const newUser = await this.model.create({
+      user_id: uuid(),
       login,
       age,
       password,
@@ -42,7 +44,7 @@ export class UserService {
     return newUser;
   }
 
-  public async updateUser(id: string, userInfo: Partial<User>) {
+  public async update(id: string, userInfo: Partial<User>) {
     const { login, password, age } = userInfo;
 
     try {
@@ -61,7 +63,7 @@ export class UserService {
     }
   }
 
-  public async deleteUser(id: string) {
+  public async delete(id: string) {
     try {
       await this.model.update(
         { is_deleted: true },

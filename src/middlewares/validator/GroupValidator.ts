@@ -5,7 +5,7 @@ import { groupValidationsSchema } from './schemes/groupSchema';
 import Validator from './Validator';
 
 class GroupValidator<
-  T extends typeof validationShcemes.user,
+  T extends typeof validationShcemes.group,
   M extends UserModel,
   U extends ValidationOptions<keyof Group>
 > extends Validator<T, M, U> {
