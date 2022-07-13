@@ -1,5 +1,4 @@
-import groupModel from '../../models/groupModel';
-import userModel from '../../models/userModel';
+import { groupModel } from '../../models';
 import { Group, UserModel, ValidationOptions } from '../../types';
 import { validationShcemes } from './schemes';
 import { groupValidationsSchema } from './schemes/groupSchema';
