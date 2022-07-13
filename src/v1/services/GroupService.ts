@@ -3,6 +3,7 @@ import { Group, GroupModel } from '../types';
 import Service from './Service';
 import { v4 as uuid } from 'uuid';
 import { Op } from 'sequelize';
+import { groupModel, userModel } from '../models';
 
 class GroupService<T extends GroupModel> extends Service<T> {
   constructor(model: T) {
@@ -20,10 +21,12 @@ class GroupService<T extends GroupModel> extends Service<T> {
             [Op.iLike]: '%' + name + '%',
           },
         },
+        include: userModel,
       });
     } else {
       return await this.model.findAll({
         limit: Number(limit) || 10,
+        include: userModel,
       });
     }
   }
@@ -58,6 +61,7 @@ class GroupService<T extends GroupModel> extends Service<T> {
 
       return await this.getById(id);
     } catch (error) {
+      console.error(error)
       return { messege: 'server error: ', error };
     }
   }
@@ -68,6 +72,7 @@ class GroupService<T extends GroupModel> extends Service<T> {
 
       return deletedItem;
     } catch (error) {
+      console.error(error)
       return { messege: 'server error: ', error };
     }
   }

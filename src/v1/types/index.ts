@@ -53,7 +53,7 @@ export type SafelyMergedObject<T, U> = Omit<U, keyof T> & {
 
 export type UserBodyRequest = Partial<
   Omit<
-    SafelyMergedObject<User, { group: string[] }>,
+    SafelyMergedObject<User, { groups: string[] }>,
     'user_id' | 'isDeleted'
   >
 >;

@@ -16,10 +16,10 @@ export const userDB = new Sequelize(
 export const startUserDB = async () => {
   try {
     await userDB.authenticate();
-    await groupModel.sync();
-    await userModel.sync();
-    await userGroup.sync();
-    await userDB.sync();
+    await groupModel.sync({force: true});
+    await userModel.sync({force: true});
+    await userGroup.sync({force: true});
+    await userDB.sync({force: true});
     console.log('Connection has been established successfully.');
   } catch (error) {
     console.error('Unable to connect to the database:', error);

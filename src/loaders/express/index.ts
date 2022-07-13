@@ -9,41 +9,39 @@ import { v4 as uuid } from 'uuid';
 const mockUsers: Partial<User>[] = [
   {
     age: 32,
-    login: 'asdasd12323ss',
+    login: 'Zhora332',
     password: '123#saxcaAD',
   },
   {
     age: 12,
-    login: 'arrrss',
+    login: 'Andry123',
     password: '123#sA2axcaAD',
   },
   {
     age: 42,
-    login: 'ASDasd12323ss',
+    login: 'Maryna3324',
     password: '323#saxcaAD',
   },
   {
     age: 66,
-    login: 'aZVNJUasd12ss',
+    login: 'Myroslaw',
     password: 'ty3#saxcaAD',
   },
   {
     age: 77,
-    login: 'NGsd12323ss',
+    login: 'Tania_2332',
     password: 'yyuu3#saxcaAD',
   },
 ];
 
 const mockGroups: Partial<Group>[] = [
-  { name: 'asdasdadsAds', group_id: uuid(), premissions: ['DELETE', 'READ'] },
-  { name: '123asdadsAds', group_id: uuid(), premissions: ['DELETE'] },
-  { name: '765dasdadsAds', group_id: uuid(), premissions: ['DELETE', 'READ'] },
+  { name: 'users', group_id: uuid(), premissions: ['READ', 'SHARE', 'WRITE'] },
   {
-    name: 'SDDSdadsAds',
+    name: 'admins',
     group_id: uuid(),
-    premissions: ['UPLOAD_FILES', 'READ'],
+    premissions: ['READ', 'WRITE', 'DELETE', 'SHARE', 'UPLOAD_FILES'],
   },
-  { name: 'HRTasdadsAds', group_id: uuid(), premissions: ['SHARE', 'READ'] },
+  { name: 'guests', group_id: uuid(), premissions: [] },
 ];
 
 const startExpress = async (app: Application) => {
@@ -56,14 +54,12 @@ const startExpress = async (app: Application) => {
 
   app.get('/test', async (req, res) => {
     try {
-      const data = await {
-        data: {
-          users: await userService.getAll(req),
-          groups: await groupService.getAll(req),
-        },
+      const data = {
+        users: await userService.getAll(req),
+        groups: await groupService.getAll(req),
       };
 
-      res.status(200).send(data);
+      res.status(200).send({ data });
     } catch (e) {
       console.error(e);
       res.sendStatus(404);

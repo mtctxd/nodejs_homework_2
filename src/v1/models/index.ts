@@ -55,7 +55,26 @@ export const userModel = userDB.define(
   }
 );
 
-export const userGroup = userDB.define('user_group', {});
+export const userGroup = userDB.define(
+  'user_group',
+  {
+    user_id: {
+      type: DataTypes.STRING,
+    },
+    group_id: {
+      type: DataTypes.STRING,
+    },
+  },
+  {
+    timestamps: false,
+  }
+);
 
-userModel.belongsToMany(groupModel, { through: userGroup });
-groupModel.belongsToMany(userModel, { through: userGroup });
+userModel.belongsToMany(groupModel, {
+  through: userGroup,
+  foreignKey: 'user_id',
+});
+groupModel.belongsToMany(userModel, {
+  through: userGroup,
+  foreignKey: 'group_id',
+});

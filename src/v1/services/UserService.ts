@@ -3,7 +3,7 @@ import { Op } from 'sequelize';
 import { User, UserBodyRequest, UserModel } from '../types/index';
 import { v4 as uuid } from 'uuid';
 import Service from './Service';
-import { groupModel } from '../models';
+import { groupModel, userGroup } from '../models';
 
 class UserService<T extends UserModel> extends Service<T> {
   constructor(model: T) {
@@ -32,39 +32,76 @@ class UserService<T extends UserModel> extends Service<T> {
   }
 
   public async getById(id: string) {
-    return await this.model.findByPk(id);
+    return await this.model.findByPk(id, { include: groupModel });
   }
 
-  public async create(userInfo: Partial<User>) {
-    const { login, age, password } = userInfo;
-    const newUser = await this.model.create({
-      user_id: uuid(),
-      login,
-      age,
-      password,
-    });
+  public async create(userInfo: UserBodyRequest) {
+    const { login, age, password, groups } = userInfo;
+    let userData = {};
+    const user_id = uuid();
 
-    return newUser;
-  }
-
-  public async update(id: string, userInfo: UserBodyRequest) {
-    const { login, password, age, group } = userInfo;
-
-    try {
-      const newUser = await this.model.update(
-        { login, password, age },
+    if (groups) {
+      const newUser = await this.model.create(
         {
-          where: {
-            id,
-          },
+          user_id,
+          login,
+          age,
+          password,
+          groups: [
+            {
+              name: groups[0],
+              userGroup: {},
+            },
+          ],
+        },
+        {
+          include: userGroup,
         }
       );
 
-      if (group) {
-      }
+      return newUser;
+    } else {
+      userData = {
+        user_id,
+        login,
+        age,
+        password,
+      };
+
+      const newUser = await this.model.create(userData);
 
       return newUser;
+    }
+  }
+
+  public async update(id: string, userInfo: UserBodyRequest) {
+    const { login, password, age, groups } = userInfo;
+
+    try {
+      if (groups) {
+        await this.model.update(
+          { login, password, age, groups },
+          {
+            where: {
+              id,
+            },
+          }
+        );
+      } else {
+        await this.model.update(
+          { login, password, age },
+          {
+            where: {
+              id,
+            },
+          }
+        );
+      }
+
+      const user = await this.getById(id);
+      return user;
     } catch (error) {
+      console.error(error);
       return { messege: 'server error: ', error };
     }
   }
@@ -82,6 +119,7 @@ class UserService<T extends UserModel> extends Service<T> {
 
       return await this.getById(id);
     } catch (error) {
+      console.error(error);
       return { messege: 'server error: ', error };
     }
   }
