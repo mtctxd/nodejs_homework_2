@@ -1,9 +1,10 @@
 import { Request, Response } from 'express';
-import groupModel from '../models/groupModel';
-import userModel from '../models/userModel';
+import { groupModel, userModel } from '../models';
+// import groupModel from '../models/groupModel';
+// import userModel from '../models/userModel';
 import GroupService from '../services/GroupService';
 import UserService from '../services/UserService';
-import { GroupModel, UserModel } from '../types';
+import { GroupModel, User, UserModel } from '../types';
 
 class Controller<T extends UserService<UserModel> | GroupService<GroupModel>> {
   private service: T;
@@ -63,8 +64,10 @@ class Controller<T extends UserService<UserModel> | GroupService<GroupModel>> {
   };
 }
 
-export const userController = new Controller(new UserService(userModel));
+export const userService = new UserService(userModel);
+export const userController = new Controller(userService);
 
-export const groupController = new Controller(new GroupService(groupModel));
+export const groupService = new GroupService(groupModel);
+export const groupController = new Controller(userService);
 
 export default Controller;

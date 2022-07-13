@@ -1,8 +1,15 @@
 import Joi, { string } from 'joi';
-import groupModel from '../models/groupModel';
-import userModel from '../models/userModel';
+import { groupModel, userModel } from '../models';
+// import groupModel from '../models/groupModel';
+// import userModel from '../models/userModel';
 
-export const premisionTypes = ['READ', 'WRITE', 'DELETE', 'SHARE', 'UPLOAD_FILES'] as const;
+export const premisionTypes = [
+  'READ',
+  'WRITE',
+  'DELETE',
+  'SHARE',
+  'UPLOAD_FILES',
+] as const;
 
 export type Premission = typeof premisionTypes[number];
 
@@ -32,6 +39,23 @@ export type ValidationOptions<T> = {
 
 export type JoiValidatinosSchema<T> = Partial<
   Record<HTTPMethod, Joi.ObjectSchema<T>>
+>;
+
+export type SafelyMergedObject<T, U> = Omit<U, keyof T> & {
+  [K in keyof T]: K extends keyof U
+    ? [U[K], T[K]] extends [object, object]
+      ? SafelyMergedObject<T[K], U[K]>
+      : T[K]
+    : T[K];
+} extends infer O
+  ? { [K in keyof O]: O[K] }
+  : never;
+
+export type UserBodyRequest = Partial<
+  Omit<
+    SafelyMergedObject<User, { group: string[] }>,
+    'user_id' | 'isDeleted'
+  >
 >;
 
 export type UserModel = typeof userModel;

@@ -1,4 +1,4 @@
-import userModel from '../../models/userModel';
+import { userModel } from '../../models';
 import { User, UserModel, ValidationOptions } from '../../types';
 import { validationShcemes } from './schemes';
 import { userValidationsSchema } from './schemes/userSchema';

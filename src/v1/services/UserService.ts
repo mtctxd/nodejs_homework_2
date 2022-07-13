@@ -1,12 +1,13 @@
 import { Request } from 'express';
 import { Op } from 'sequelize';
-import { User, UserModel } from '../types/index';
+import { User, UserBodyRequest, UserModel } from '../types/index';
 import { v4 as uuid } from 'uuid';
 import Service from './Service';
+import { groupModel } from '../models';
 
 class UserService<T extends UserModel> extends Service<T> {
   constructor(model: T) {
-    super(model)
+    super(model);
   }
 
   public async getAll(req: Request) {
@@ -20,10 +21,12 @@ class UserService<T extends UserModel> extends Service<T> {
             [Op.iLike]: '%' + login + '%',
           },
         },
+        include: groupModel,
       });
     } else {
       return await this.model.findAll({
         limit: Number(limit) || 10,
+        include: groupModel,
       });
     }
   }
@@ -44,11 +47,11 @@ class UserService<T extends UserModel> extends Service<T> {
     return newUser;
   }
 
-  public async update(id: string, userInfo: Partial<User>) {
-    const { login, password, age } = userInfo;
+  public async update(id: string, userInfo: UserBodyRequest) {
+    const { login, password, age, group } = userInfo;
 
     try {
-      await this.model.update(
+      const newUser = await this.model.update(
         { login, password, age },
         {
           where: {
@@ -57,7 +60,10 @@ class UserService<T extends UserModel> extends Service<T> {
         }
       );
 
-      return await this.getById(id);
+      if (group) {
+      }
+
+      return newUser;
     } catch (error) {
       return { messege: 'server error: ', error };
     }
@@ -79,6 +85,8 @@ class UserService<T extends UserModel> extends Service<T> {
       return { messege: 'server error: ', error };
     }
   }
+
+  public addGrpup() {}
 }
 
 export default UserService;

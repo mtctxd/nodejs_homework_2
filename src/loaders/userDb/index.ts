@@ -1,7 +1,6 @@
 import { Sequelize } from 'sequelize';
 import { dbConfig } from '../../config';
-import groupModel from '../../v1/models/groupModel';
-import userModel from '../../v1/models/userModel';
+import { groupModel, userGroup, userModel } from '../../v1/models';
 
 export const userDB = new Sequelize(
   dbConfig.database,
@@ -17,8 +16,9 @@ export const userDB = new Sequelize(
 export const startUserDB = async () => {
   try {
     await userDB.authenticate();
-    // await groupModel.sync()
-    // await userModel.sync();
+    await groupModel.sync();
+    await userModel.sync();
+    await userGroup.sync();
     await userDB.sync();
     console.log('Connection has been established successfully.');
   } catch (error) {

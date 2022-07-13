@@ -64,14 +64,6 @@ class GroupService<T extends GroupModel> extends Service<T> {
 
   public async delete(id: string) {
     try {
-      // await this.model.update(
-      //   { is_deleted: true },
-      //   {
-      //     where: {
-      //       id,
-      //     },
-      //   }
-      // );
       const deletedItem = await this.model.destroy({ where: { id } });
 
       return deletedItem;

@@ -16,4 +16,6 @@
 - [ ] tests? no?
 - [ ] maybe bad bad way to make versions for API
 - [ ] file structure?
-- [ ] problem when deleting grup (return some error but it also delete item from table, the next response will be {message: "item not found"})
+- [x] problem when deleting grup (return some error but it also delete item from table, the next response will be {message: "item not found"})
+- [ ] code repetition in services
+- [ ] redundant classes

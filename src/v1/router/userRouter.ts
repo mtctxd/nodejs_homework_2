@@ -9,12 +9,12 @@ const userRouter = Router();
   userRouter.get('/:id', userController.getById);
   userRouter.post(
     '/',
-    await userValidator.validate('create'),
+    // await userValidator.validate('create'),
     userController.createUser
   );
   userRouter.put(
     '/:id',
-    await userValidator.validate('update'),
+    // await userValidator.validate('update'),
     userController.updateUser
   );
   userRouter.delete('/:id', userController.deleteUser);
