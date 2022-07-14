@@ -6,3 +6,5 @@ export type User = {
   age: number;
   is_deleted: boolean;
 };
+
+export type UserCreateUpdateProperties = Omit<User, 'id' | 'is_deleted' | 'user_id'>;

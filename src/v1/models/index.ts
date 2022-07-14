@@ -1,9 +1,9 @@
 import { DataTypes, Model, Optional } from 'sequelize';
-import { appDB } from '../..';
+import { appDB } from '../../loaders/appDB';
 
 import { User } from '../types';
 
-type UserCreationAttributes = Optional<User, 'id'>;
+export type UserCreationAttributes = Optional<User, 'id' | 'is_deleted'>;
 
 export class UserModel extends Model<User, UserCreationAttributes> {
   declare id: number;

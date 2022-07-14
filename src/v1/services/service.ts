@@ -1,17 +1,14 @@
-import { Model } from "sequelize/types";
-import { UserModel } from "../models";
+import { v4 as uuid } from 'uuid';
+
+import { UserCreationAttributes, UserModel } from '../models';
+import { User } from '../types';
 
 class Service<T extends typeof UserModel> {
-    public model: T; 
+  public model: T;
 
-    constructor(model: T) {
-        this.model = model;
-    }
-
-    getAll = async () => {
-        const items = await this.model.findAll();
-        return items;
-    }
+  constructor(model: T) {
+    this.model = model;
+  }
 }
 
-export const userService = new Service(UserModel);
+export default Service;
