@@ -1,33 +1,41 @@
+import { z } from 'zod';
 import { ValidationMethods } from '../../../types';
-import { UserUpdateProperties } from '../../types';
-import groupValidationSchema, {
-  GroupValidationSchema,
-} from './schema/groupSchema';
-import userValidationSchema, {
-  UserValidationSchema,
-} from './schema/userSchema';
+import {
+  GroupCreateProperties,
+  GroupUpdateProperties,
+  UserCreateProperties,
+  UserUpdateProperties,
+} from '../../types';
+import groupValidationSchema from './schema/groupSchema';
+import userValidationSchema from './schema/userSchema';
+
+type PlaceholderSchema = {
+  create: z.Schema<any>;
+  update: z.Schema<any>;
+};
+
+type PlaceholderProps =
+  | GroupCreateProperties
+  | GroupUpdateProperties
+  | UserCreateProperties
+  | UserUpdateProperties;
 
 class Validator {
-  public schema: UserValidationSchema | GroupValidationSchema;
-  constructor(schema: UserValidationSchema | GroupValidationSchema) {
+  public schema: PlaceholderSchema;
+  constructor(schema: PlaceholderSchema) {
     this.schema = schema;
   }
 
   private processValidation = (
-    data: UserUpdateProperties,
-    valodationMethod:
-      | UserValidationSchema[keyof UserValidationSchema]
-      | GroupValidationSchema[keyof GroupValidationSchema]
+    data: PlaceholderProps,
+    valodationMethod: z.Schema<any>
   ) => {
     const result = valodationMethod.safeParse(data);
 
     return result;
   };
 
-  public validate = (
-    data: UserUpdateProperties,
-    type: keyof UserValidationSchema | keyof GroupValidationSchema
-  ) => {
+  public validate = (data: PlaceholderProps, type: keyof PlaceholderSchema) => {
     switch (type) {
       case ValidationMethods.CREATE:
         return this.processValidation(data, this.schema.create);
@@ -42,4 +50,4 @@ class Validator {
 }
 
 export const userValidator = new Validator(userValidationSchema);
-export const groupValidaror = new Validator(groupValidationSchema);
+export const groupValidator = new Validator(groupValidationSchema);

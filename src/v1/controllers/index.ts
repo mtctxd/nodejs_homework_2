@@ -23,7 +23,7 @@ class Controller<T extends typeof userService | typeof groupService> {
   public getByID = async (req: Request, res: Response, next: NextFunction) => {
     const item = await this.service.getByID(+req.params.id);
 
-    res.status(HTTP_STATUS.OK_200).send(item);
+    res.status(HTTP_STATUS.OK_200).send(item || []);
   };
 
   public create = async (req: Request, res: Response, next: NextFunction) => {
@@ -44,7 +44,7 @@ class Controller<T extends typeof userService | typeof groupService> {
 
   public delete = async (req: Request, res: Response, next: NextFunction) => {
     this.warpWithErrorHandling(res, async () => {
-      const item = await this.service.update(+req.params.id, req.body);
+      const item = await this.service.delete(+req.params.id);
 
       res.status(HTTP_STATUS.ACCEPTED_202).send(item);
     });
