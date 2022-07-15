@@ -1,13 +1,13 @@
-import { v4 as uuid } from 'uuid';
+import { userValidator } from '../middlewares/validator/Validator';
+import { UserModel } from '../models';
 
-import { UserCreationAttributes, UserModel } from '../models';
-import { User } from '../types';
-
-class Service<T extends typeof UserModel> {
+class Service<T extends typeof UserModel, V extends typeof userValidator> {
   public model: T;
+  public validator: V;
 
-  constructor(model: T) {
+  constructor(model: T, validator: V) {
     this.model = model;
+    this.validator = validator;
   }
 }
 

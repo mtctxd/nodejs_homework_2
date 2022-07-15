@@ -1,15 +1,18 @@
+import { generateMock } from '@anatine/zod-mock';
 import { z } from 'zod';
+import { UserCreateProperties } from '../../../types';
 
 const passwordRules = {
   errorMessage:
-    'password should contain eight characters, at least one uppercase letter, one lowercase letter, one number and one special character',
+    'password shoulc contain between 6 and 16 characters, at least one number, special character',
   regexp:
-    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+  /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,16}$/,
 };
 
 const userSchema = {
   id: z.undefined(),
   user_id: z.undefined(),
+  is_deleted: z.undefined(),
   login: z.string().trim().min(6).max(21),
   password: z
     .string()
@@ -21,6 +24,7 @@ const userSchema = {
 const userSchemaOptional = {
   id: z.undefined(),
   user_id: z.undefined(),
+  is_deleted: z.undefined(),
   login: z.string().trim().min(6).max(21).optional(),
   password: z
     .string()
@@ -30,12 +34,19 @@ const userSchemaOptional = {
   age: z.number().int().min(12).max(120).optional(),
 };
 
-const userCreateSchema = z.object(userSchema);
-const userUpdataSchema = z.object(userSchemaOptional);
+const userCreateSchema: z.ZodSchema<UserCreateProperties> =
+  z.object(userSchema);
+const userUpdataSchema: z.ZodSchema<Partial<UserCreateProperties>> =
+  z.object(userSchemaOptional);
 
 const userValidationSchema = {
   create: userCreateSchema,
   update: userUpdataSchema,
 };
 
+export type UserCreateSchemaType = z.infer<typeof userCreateSchema>;
+export type UserUpdateSchemaType = z.infer<typeof userUpdataSchema>;
+export type UserValidationSchema = typeof userValidationSchema;
+
 export default userValidationSchema;
+

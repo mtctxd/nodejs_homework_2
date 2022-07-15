@@ -10,3 +10,8 @@ export enum HTTP_STATUS {
     REQUEST_TIMEOUT_408 = 408,
     INTERNAL_SERVER_ERROR_500 = 500,
 }
+
+export enum ValidationMethods {
+    CREATE = 'create',
+    UPDATE = 'update',
+}

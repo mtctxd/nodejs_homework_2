@@ -7,4 +7,6 @@ export type User = {
   is_deleted: boolean;
 };
 
-export type UserCreateUpdateProperties = Omit<User, 'id' | 'is_deleted' | 'user_id'>;
+export type UserCreateProperties = Omit<User, 'id' | 'is_deleted' | 'user_id'>;
+export type UserUpdateProperties = Partial<UserCreateProperties>;
+export type UserCreateUpdateProperties = UserUpdateProperties | UserCreateProperties;

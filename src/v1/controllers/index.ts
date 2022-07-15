@@ -1,5 +1,7 @@
+import { generateMock } from '@anatine/zod-mock';
 import { NextFunction, Request, Response } from 'express';
 import { HTTP_STATUS } from '../../types';
+import userValidationSchema from '../middlewares/validator/schema/userSchema';
 import { userService } from '../services/UserService';
 
 class Controller<T extends typeof userService> {
@@ -9,34 +11,49 @@ class Controller<T extends typeof userService> {
     this.service = service;
   }
 
-  getAll = async (req: Request, res: Response, next: NextFunction) => {
-    const items = await this.service.getAll();
+  public getAll = async (req: Request, res: Response, next: NextFunction) => {
+    this.warpWithErrorHandling(res, async () => {
+      const items = await this.service.getAll(req);
 
-    res.status(HTTP_STATUS.OK_200).send(items);
+      res.status(HTTP_STATUS.OK_200).send(items);
+    });
   };
 
-  getByID = async (req: Request, res: Response, next: NextFunction) => {
+  public getByID = async (req: Request, res: Response, next: NextFunction) => {
     const item = await this.service.getByID(+req.params.id);
 
     res.status(HTTP_STATUS.OK_200).send(item);
   };
 
-  create = async (req: Request, res: Response, next: NextFunction) => {
-    const item = await this.service.create(req.body);
+  public create = async (req: Request, res: Response, next: NextFunction) => {
+    this.warpWithErrorHandling(res, async () => {
+      const item = await this.service.create(req.body);
 
-    res.status(HTTP_STATUS.CREATED_201).send(item);
+      res.status(HTTP_STATUS.CREATED_201).send(item);
+    });
   };
 
-  update = async (req: Request, res: Response, next: NextFunction) => {
-      const item = await this.service.update(+req.params.id, req.body);
-
-      res.status(HTTP_STATUS.ACCEPTED_202).send(item);
-  };
-
-  delete = async (req: Request, res: Response, next: NextFunction) => {
+  public update = async (req: Request, res: Response, next: NextFunction) => {
     const item = await this.service.update(+req.params.id, req.body);
 
     res.status(HTTP_STATUS.ACCEPTED_202).send(item);
+  };
+
+  public delete = async (req: Request, res: Response, next: NextFunction) => {
+    const item = await this.service.update(+req.params.id, req.body);
+
+    res.status(HTTP_STATUS.ACCEPTED_202).send(item);
+  };
+
+  private warpWithErrorHandling = async (res: Response, f: Function) => {
+    try {
+      await f();
+    } catch (error) {
+      console.error({ type: 'controller error', info: JSON.stringify(error) });
+      res
+        .status(HTTP_STATUS.BAD_REQUEST_400)
+        .send({ message: 'Bad Request', details: error });
+    }
   };
 }
 
