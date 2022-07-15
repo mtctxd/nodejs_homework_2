@@ -2,9 +2,10 @@ import { generateMock } from '@anatine/zod-mock';
 import { NextFunction, Request, Response } from 'express';
 import { HTTP_STATUS } from '../../types';
 import userValidationSchema from '../middlewares/validator/schema/userSchema';
+import { groupService } from '../services/GroupService';
 import { userService } from '../services/UserService';
 
-class Controller<T extends typeof userService> {
+class Controller<T extends typeof userService | typeof groupService> {
   public service: T;
 
   constructor(service: T) {
@@ -34,15 +35,19 @@ class Controller<T extends typeof userService> {
   };
 
   public update = async (req: Request, res: Response, next: NextFunction) => {
-    const item = await this.service.update(+req.params.id, req.body);
+    this.warpWithErrorHandling(res, async () => {
+      const item = await this.service.update(+req.params.id, req.body);
 
-    res.status(HTTP_STATUS.ACCEPTED_202).send(item);
+      res.status(HTTP_STATUS.ACCEPTED_202).send(item);
+    });
   };
 
   public delete = async (req: Request, res: Response, next: NextFunction) => {
-    const item = await this.service.update(+req.params.id, req.body);
+    this.warpWithErrorHandling(res, async () => {
+      const item = await this.service.update(+req.params.id, req.body);
 
-    res.status(HTTP_STATUS.ACCEPTED_202).send(item);
+      res.status(HTTP_STATUS.ACCEPTED_202).send(item);
+    });
   };
 
   private warpWithErrorHandling = async (res: Response, f: Function) => {
@@ -58,3 +63,4 @@ class Controller<T extends typeof userService> {
 }
 
 export const userController = new Controller(userService);
+export const groupController = new Controller(groupService)

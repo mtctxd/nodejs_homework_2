@@ -1,18 +1,23 @@
 import { ValidationMethods } from '../../../types';
-import { UserCreateUpdateProperties } from '../../types';
+import { UserUpdateProperties } from '../../types';
+import groupValidationSchema, {
+  GroupValidationSchema,
+} from './schema/groupSchema';
 import userValidationSchema, {
   UserValidationSchema,
 } from './schema/userSchema';
 
 class Validator {
-  public schema: UserValidationSchema;
-  constructor(schema: UserValidationSchema) {
+  public schema: UserValidationSchema | GroupValidationSchema;
+  constructor(schema: UserValidationSchema | GroupValidationSchema) {
     this.schema = schema;
   }
 
   private processValidation = (
-    data: UserCreateUpdateProperties,
-    valodationMethod: UserValidationSchema[keyof UserValidationSchema]
+    data: UserUpdateProperties,
+    valodationMethod:
+      | UserValidationSchema[keyof UserValidationSchema]
+      | GroupValidationSchema[keyof GroupValidationSchema]
   ) => {
     const result = valodationMethod.safeParse(data);
 
@@ -20,8 +25,8 @@ class Validator {
   };
 
   public validate = (
-    data: UserCreateUpdateProperties,
-    type: keyof UserValidationSchema
+    data: UserUpdateProperties,
+    type: keyof UserValidationSchema | keyof GroupValidationSchema
   ) => {
     switch (type) {
       case ValidationMethods.CREATE:
@@ -37,3 +42,4 @@ class Validator {
 }
 
 export const userValidator = new Validator(userValidationSchema);
+export const groupValidaror = new Validator(groupValidationSchema);

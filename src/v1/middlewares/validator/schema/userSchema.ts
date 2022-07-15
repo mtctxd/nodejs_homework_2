@@ -1,4 +1,3 @@
-import { generateMock } from '@anatine/zod-mock';
 import { z } from 'zod';
 import { UserCreateProperties } from '../../../types';
 
@@ -47,6 +46,7 @@ const userValidationSchema = {
 export type UserCreateSchemaType = z.infer<typeof userCreateSchema>;
 export type UserUpdateSchemaType = z.infer<typeof userUpdataSchema>;
 export type UserValidationSchema = typeof userValidationSchema;
+export type UserValidationKeys = keyof UserValidationSchema;
 
 export default userValidationSchema;
 

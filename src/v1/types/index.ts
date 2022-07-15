@@ -1,3 +1,13 @@
+export const premisionTypes = [
+  'READ',
+  'WRITE',
+  'DELETE',
+  'SHARE',
+  'UPLOAD_FILES',
+] as const;
+
+export type Premission = typeof premisionTypes[number];
+
 export type User = {
   id: number;
   user_id: string;
@@ -7,6 +17,20 @@ export type User = {
   is_deleted: boolean;
 };
 
+export type Group = {
+  id: number;
+  group_id: string;
+  name: string;
+  premissions: Array<Premission>;
+};
+
 export type UserCreateProperties = Omit<User, 'id' | 'is_deleted' | 'user_id'>;
 export type UserUpdateProperties = Partial<UserCreateProperties>;
-export type UserCreateUpdateProperties = UserUpdateProperties | UserCreateProperties;
+
+export type GroupCreateProperties = Omit<Group, 'id' | 'group_id'>;
+export type GroupUpdateProperties = Partial<GroupCreateProperties>;
+
+
+export type UniqueUserKey = keyof Pick<UserCreateProperties, 'login'>;
+export type UniqueGroupKey = keyof Pick<GroupCreateProperties, 'name'>;
+export type UniqueKeys = UniqueUserKey | UniqueGroupKey;
