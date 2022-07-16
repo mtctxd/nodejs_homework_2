@@ -10,13 +10,13 @@ class Controller<T extends typeof userService | typeof groupService> {
     this.service = service;
   }
 
-  public async getAll(req: Request, res: Response, next: NextFunction) {
-    // this.warpWithErrorHandling(res, async () => {
-    const items = await this.service.getAll(req);
+  public getAll = async (req: Request, res: Response, next: NextFunction) => {
+    this.warpWithErrorHandling(res, async () => {
+      const items = await this.service.getAll(req);
 
-    res.status(HTTP_STATUS.OK_200).send(items);
-    // });
-  }
+      res.status(HTTP_STATUS.OK_200).send(items);
+    });
+  };
 
   public getByID = async (req: Request, res: Response, next: NextFunction) => {
     const item = await this.service.getByID(+req.params.id);
