@@ -1,7 +1,5 @@
-import { generateMock } from '@anatine/zod-mock';
 import { NextFunction, Request, Response } from 'express';
 import { HTTP_STATUS } from '../../types';
-import userValidationSchema from '../middlewares/validator/schema/userSchema';
 import { groupService } from '../services/GroupService';
 import { userService } from '../services/UserService';
 
@@ -12,13 +10,13 @@ class Controller<T extends typeof userService | typeof groupService> {
     this.service = service;
   }
 
-  public getAll = async (req: Request, res: Response, next: NextFunction) => {
-    this.warpWithErrorHandling(res, async () => {
-      const items = await this.service.getAll(req);
+  public async getAll(req: Request, res: Response, next: NextFunction) {
+    // this.warpWithErrorHandling(res, async () => {
+    const items = await this.service.getAll(req);
 
-      res.status(HTTP_STATUS.OK_200).send(items);
-    });
-  };
+    res.status(HTTP_STATUS.OK_200).send(items);
+    // });
+  }
 
   public getByID = async (req: Request, res: Response, next: NextFunction) => {
     const item = await this.service.getByID(+req.params.id);
@@ -63,4 +61,4 @@ class Controller<T extends typeof userService | typeof groupService> {
 }
 
 export const userController = new Controller(userService);
-export const groupController = new Controller(groupService)
+export const groupController = new Controller(groupService);
