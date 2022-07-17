@@ -6,7 +6,9 @@ import { Group, GroupCreateProperties } from '../types';
 import { v4 as uuid } from 'uuid';
 import { FindOptions, Op } from 'sequelize';
 import { Request } from 'express';
-import { GroupModel } from '../models/gropuModel';
+import { GroupCreationAttributes, GroupModel } from '../models/gropuModel';
+import { UserModel } from '../models/userModel';
+import { userService } from './UserService';
 
 class GroupService<
   T extends typeof GroupModel,
@@ -28,37 +30,45 @@ class GroupService<
     return items;
   };
 
-  public getByID = async (id: number) => {
+  public getByPK = async (id: number) => {
     const item = await this.model.findByPk(id);
 
     return item;
   };
 
-  public create = async (itemData: Required<U>) => {
-    await this.validateRequestBody(itemData, 'create');
+  public create = async (reqBody: Required<U>) => {
+    await this.validateRequestBody(reqBody, 'create');
+    const { name, premissions } = reqBody;
+    const group_id = uuid();
 
-    const newGroupData = {
-      group_id: uuid(),
-      ...itemData,
+    const newGroupData: GroupCreationAttributes = {
+      group_id,
+      name,
+      premissions,
     };
 
-    const newUser = await this.model.create(newGroupData);
+    const newGroup = await this.model.create(newGroupData);
+    const user = await userService.getByPK(1);
 
-    return newUser;
+    // newGroup.addUser(1);
+
+    // this.addUsersToModel(newGroup, reqBody);
+
+    return newGroup;
   };
 
-  public update = async (id: number, itemData: Partial<U> | U) => {
-    await this.validateRequestBody(itemData, 'update');
+  public update = async (id: number, reqBody: Partial<U> | U) => {
+    await this.validateRequestBody(reqBody, 'update');
 
-    const item = await this.getByID(id);
+    const item = await this.getByPK(id);
 
     if (!item) {
       throw new Error('not found');
     }
 
-    const updatedUser = item.update(itemData);
+    const updatedGroup = item.update(reqBody);
 
-    return updatedUser;
+    return updatedGroup;
   };
 
   public delete = async (id: number) => {
@@ -70,16 +80,16 @@ class GroupService<
   };
 
   protected validateRequestBody = async (
-    itemData: Partial<U> | U,
+    reqBody: Partial<U> | U,
     key: 'create' | 'update'
   ) => {
-    const validationInfo = this.validator.validate(itemData, key);
+    const validationInfo = this.validator.validate(reqBody, key);
 
     if (!validationInfo?.success) {
       throw validationInfo?.error.issues;
     }
 
-    if (itemData.name && (await this.uniqueFieldUsed(itemData.name))) {
+    if (reqBody.name && (await this.uniqueFieldUsed(reqBody.name))) {
       throw [{ message: `this name already taken` }];
     }
   };
@@ -101,6 +111,7 @@ class GroupService<
     const options: FindOptions<Group> = {
       where: {},
       limit: Number(limit) || 10,
+      include: UserModel,
     };
 
     if (name) {
@@ -113,6 +124,48 @@ class GroupService<
     }
 
     return options;
+  };
+
+  protected addUsersToModel = async (
+    model: GroupModel,
+    { users }: Required<U>
+  ): Promise<void> => {
+    if (users) {
+      const usersToAdd: UserModel[] = await UserModel.findAll({
+        where: {
+          user_id: {
+            [Op.any]: users,
+          },
+        },
+      });
+
+      model.addUsers(usersToAdd);
+    }
+  };
+
+  protected addUsersToGroupByIds = async (
+    group_id: string,
+    user_ids: string[]
+  ): Promise<void> => {
+    try {
+      const group = await this.model.findOne({
+        where: {
+          group_id,
+        },
+      });
+
+      const users = await UserModel.findAll({
+        where: {
+          user_id: {
+            [Op.any]: user_ids,
+          },
+        },
+      });
+
+      group?.addUsers(users);
+    } catch (error) {
+      throw error;
+    }
   };
 }
 

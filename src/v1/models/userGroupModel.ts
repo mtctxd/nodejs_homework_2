@@ -27,9 +27,17 @@ UserGroupModel.init(
   },
   {
     sequelize: appDB,
-    tableName: 'user_group'
+    tableName: 'user_group',
   }
 );
 
-UserModel.belongsToMany(GroupModel, {through: UserGroupModel});
-GroupModel.belongsToMany(UserModel, {through: UserGroupModel});
+UserModel.belongsToMany(GroupModel, {
+  through: UserGroupModel,
+  foreignKey: 'user_id',
+  otherKey: 'group_id',
+});
+GroupModel.belongsToMany(UserModel, {
+  through: UserGroupModel,
+  foreignKey: 'group_id',
+  otherKey: 'user_id',
+});

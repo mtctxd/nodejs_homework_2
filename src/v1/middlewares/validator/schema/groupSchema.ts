@@ -10,6 +10,7 @@ const groupSchema = {
   group_id: z.undefined(),
   name: z.string().min(6).max(16),
   premissions: z.array(z.enum(premisionTypes)),
+  users: z.array(z.string()).optional(),
 };
 
 const groupSchemaOptional = {
@@ -17,6 +18,7 @@ const groupSchemaOptional = {
   group_id: z.undefined().optional(),
   name: z.string().min(6).max(16).optional(),
   premissions: z.array(z.enum(premisionTypes)).optional(),
+  users: z.array(z.string()).optional(),
 };
 
 const groupCreateSchema: z.ZodSchema<GroupCreateProperties> =
