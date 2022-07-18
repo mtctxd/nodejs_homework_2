@@ -15,6 +15,7 @@ export type User = {
   password: string;
   age: number;
   is_deleted: boolean;
+  groups?: string[]
 };
 
 export type Group = {

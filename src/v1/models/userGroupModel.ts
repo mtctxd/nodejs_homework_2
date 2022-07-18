@@ -7,7 +7,6 @@ export class UserGroupModel extends Model {
   declare id: number;
   declare group_id: string;
   declare user_id: string;
-  declare edit: boolean;
 }
 
 UserGroupModel.init(
@@ -25,10 +24,6 @@ UserGroupModel.init(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    edit: {
-      field: 'edit',
-      type: DataTypes.BOOLEAN
-    }
   },
   {
     sequelize: appDB,

@@ -30,16 +30,16 @@ export class UserModel extends Model<User, UserCreationAttributes> {
   declare age: number;
   declare is_deleted: boolean;
 
-  declare getGroups: BelongsToManyGetAssociationsMixin<GroupModel>; // Note the null assertions!
-  declare addGroup: BelongsToManyAddAssociationMixin<GroupModel, string>;
-  declare addGroups: BelongsToManyAddAssociationsMixin<GroupModel, string>;
-  declare setGroups: BelongsToManySetAssociationsMixin<GroupModel, string>;
-  declare removeGroup: BelongsToManyRemoveAssociationMixin<GroupModel, string>;
-  declare removeGroups: BelongsToManyRemoveAssociationsMixin<GroupModel, string>;
-  declare hasGroup: BelongsToManyHasAssociationMixin<GroupModel, string>;
-  declare hasGroups: BelongsToManyHasAssociationsMixin<GroupModel, string>;
-  declare countGroups: BelongsToManyCountAssociationsMixin;
-  declare createGroup: BelongsToManyCreateAssociationMixin<GroupModel>;
+  declare getGroupModels: BelongsToManyGetAssociationsMixin<GroupModel>; // Note the null assertions!
+  declare addGroupModel: BelongsToManyAddAssociationMixin<GroupModel, UserModel>;
+  declare addGroupModels: BelongsToManyAddAssociationsMixin<GroupModel, UserModel>;
+  declare setGroupModels: BelongsToManySetAssociationsMixin<GroupModel, string>;
+  declare removeGroupModel: BelongsToManyRemoveAssociationMixin<GroupModel, string>;
+  declare removeGroupModels: BelongsToManyRemoveAssociationsMixin<GroupModel, string>;
+  declare hasGroupModel: BelongsToManyHasAssociationMixin<GroupModel, string>;
+  declare hasGroupModels: BelongsToManyHasAssociationsMixin<GroupModel, string>;
+  declare countGroupModels: BelongsToManyCountAssociationsMixin;
+  declare createGroupModel: BelongsToManyCreateAssociationMixin<GroupModel>;
 
   declare groups?: NonAttribute<GroupModel[]>;
 

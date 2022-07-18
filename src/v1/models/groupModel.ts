@@ -28,16 +28,16 @@ export class GroupModel extends Model<Group, GroupCreationAttributes> {
   declare name: string;
   declare premissions: Premission[];
 
-  declare getUsers: BelongsToManyGetAssociationsMixin<UserModel>; // Note the null assertions!
-  declare addUser: BelongsToManyAddAssociationMixin<UserModel, any>;
-  declare addUsers: BelongsToManyAddAssociationsMixin<UserModel, string>;
-  declare setUsers: BelongsToManySetAssociationsMixin<UserModel, string>;
-  declare removeUser: BelongsToManyRemoveAssociationMixin<UserModel, string>;
-  declare removeUsers: BelongsToManyRemoveAssociationsMixin<UserModel, string>;
-  declare hasUser: BelongsToManyHasAssociationMixin<UserModel, string>;
-  declare hasUsers: BelongsToManyHasAssociationsMixin<UserModel, string>;
-  declare countUsers: BelongsToManyCountAssociationsMixin;
-  declare createUser: BelongsToManyCreateAssociationMixin<UserModel>;
+  declare getUserModels: BelongsToManyGetAssociationsMixin<UserModel>; // Note the null assertions!
+  declare addUserModel: BelongsToManyAddAssociationMixin<UserModel, GroupModel>;
+  declare addUserModels: BelongsToManyAddAssociationsMixin<UserModel, GroupModel>;
+  declare setUserModels: BelongsToManySetAssociationsMixin<UserModel, string>;
+  declare removeUserModel: BelongsToManyRemoveAssociationMixin<UserModel, string>;
+  declare removeUserrModel: BelongsToManyRemoveAssociationsMixin<UserModel, string>;
+  declare hasUserModel: BelongsToManyHasAssociationMixin<UserModel, string>;
+  declare hasUserrModel: BelongsToManyHasAssociationsMixin<UserModel, string>;
+  declare countUserrModel: BelongsToManyCountAssociationsMixin;
+  declare createUserModel: BelongsToManyCreateAssociationMixin<UserModel>;
 
   declare users?: NonAttribute<UserModel[]>;
 

@@ -8,8 +8,6 @@ import { FindOptions, Op } from 'sequelize';
 import { Request } from 'express';
 import { GroupCreationAttributes, GroupModel } from '../models/groupModel';
 import { UserModel } from '../models/userModel';
-import { userService } from './UserService';
-import { UserGroupModel } from '../models/userGroupModel';
 
 class GroupService<
   T extends typeof GroupModel,
@@ -32,7 +30,13 @@ class GroupService<
   };
 
   public getByPK = async (id: number) => {
-    const item = await this.model.findByPk(id);
+    const item = await this.model.findByPk(id, {
+      include: [
+        {
+          model: UserModel,
+        },
+      ],
+    });
 
     return item;
   };
@@ -49,50 +53,24 @@ class GroupService<
     };
 
     const newGroup = await this.model.create(newGroupData);
-    const user = await userService.getByPK(1);
 
-    await UserGroupModel.create({
-      user_id: 1,
-      group_id,
-    });
-
-    // newGroup.addUser(1);
-
-    // this.addUsersToModel(newGroup, reqBody);
+    await this.addUsersToGroup(newGroup, reqBody);
 
     return newGroup;
   };
 
-  public update = async (id: number, reqBody: Partial<U> | U) => {
+  public update = async (id: number, reqBody: Partial<U>) => {
     await this.validateRequestBody(reqBody, 'update');
-
+    
     const item = await this.getByPK(id);
-
+    
     if (!item) {
       throw new Error('not found');
     }
-
+    
     const updatedGroup = await item.update(reqBody);
-    updatedGroup.group_id;
-
-    const user = await userService.getByPK(2);
-
-    // await UserGroupModel.create({
-    //   user_id: user?.user_id,
-    //   group_id: updatedGroup.group_id,
-    // });
-
-    if (user) {
-      console.log(await Object.getOwnPropertyNames(updatedGroup))
-      // await updatedGroup.addUser(user, {through: {
-      //   edit: true,
-      // }});
-      // const userssss = await updatedGroup.getUsers();
-      // console.log(userssss);
-    }
-
-    // console.log(await updatedGroup.countUsers());
-    // this.addUsersToModel(updatedGroup, reqBody);
+    
+    await this.addUsersToGroup(updatedGroup, reqBody);
 
     return updatedGroup;
   };
@@ -137,7 +115,9 @@ class GroupService<
     const options: FindOptions<Group> = {
       where: {},
       limit: Number(limit) || 10,
-      include: UserModel,
+      include: {
+        model: UserModel,
+      },
     };
 
     if (name) {
@@ -152,7 +132,7 @@ class GroupService<
     return options;
   };
 
-  protected addUsersToModel = async (
+  protected addUsersToGroup = async (
     model: GroupModel,
     { users }: Partial<U> | U
   ): Promise<void> => {
@@ -164,33 +144,8 @@ class GroupService<
           },
         },
       });
-
-      model.addUsers(usersToAdd);
-    }
-  };
-
-  protected addUsersToGroupByIds = async (
-    group_id: string,
-    user_ids: string[]
-  ): Promise<void> => {
-    try {
-      const group = await this.model.findOne({
-        where: {
-          group_id,
-        },
-      });
-
-      const users = await UserModel.findAll({
-        where: {
-          user_id: {
-            [Op.any]: user_ids,
-          },
-        },
-      });
-
-      group?.addUsers(users);
-    } catch (error) {
-      throw error;
+      
+      await model.addUserModels(usersToAdd);
     }
   };
 }

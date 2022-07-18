@@ -27,26 +27,34 @@ class UserService<
   };
 
   public getByPK = async (id: number) => {
-    const item = await this.model.findByPk(id);
+    const item = await this.model.findByPk(id, {
+      include: [
+        {
+          model: GroupModel,
+        },
+      ],
+    });
 
     return item;
   };
 
-  public create = async (itemData: Required<U>) => {
-    await this.validateRequestBody(itemData, 'create');
+  public create = async (reqBody: Required<U>) => {
+    await this.validateRequestBody(reqBody, 'create');
+    const user_id = uuid();
 
     const newUserData = {
-      user_id: uuid(),
-      ...itemData,
+      user_id,
+      ...reqBody,
     };
 
     const newUser = await this.model.create(newUserData);
+    await this.addGroupsToUsers(newUser, reqBody)
 
     return newUser;
   };
 
-  public update = async (id: number, itemData: Partial<U>) => {
-    await this.validateRequestBody(itemData, 'update');
+  public update = async (id: number, reqBody: Partial<U>) => {
+    await this.validateRequestBody(reqBody, 'update');
 
     const item = await this.getByPK(id);
 
@@ -54,7 +62,9 @@ class UserService<
       throw new Error('not found');
     }
 
-    const updatedUser = item.update(itemData);
+    const updatedUser = await item.update(reqBody);
+
+    await this.addGroupsToUsers(updatedUser, reqBody);
 
     return updatedUser;
   };
@@ -70,16 +80,16 @@ class UserService<
   };
 
   protected validateRequestBody = async (
-    itemData: Partial<UserCreateProperties> | UserCreateProperties,
+    reqBody: Partial<UserCreateProperties> | UserCreateProperties,
     key: 'create' | 'update'
   ) => {
-    const validationInfo = this.validator.validate(itemData, key);
+    const validationInfo = this.validator.validate(reqBody, key);
 
     if (!validationInfo?.success) {
       throw validationInfo?.error.issues;
     }
 
-    if (itemData.login && (await this.uniqueFieldUsed(itemData.login))) {
+    if (reqBody.login && (await this.uniqueFieldUsed(reqBody.login))) {
       throw [{ message: `this login already taken` }];
     }
   };
@@ -116,6 +126,23 @@ class UserService<
     }
 
     return options;
+  };
+
+  protected addGroupsToUsers = async (
+    model: UserModel,
+    { groups }: Partial<U> | U
+  ): Promise<void> => {
+    if (groups) {
+      const usersToAdd: GroupModel[] = await GroupModel.findAll({
+        where: {
+          group_id: {
+            [Op.any]: groups,
+          },
+        },
+      });
+      
+      await model.addGroupModels(usersToAdd);
+    }
   };
 }
 
