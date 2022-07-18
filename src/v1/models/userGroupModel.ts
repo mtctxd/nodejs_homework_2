@@ -1,18 +1,19 @@
 import { DataTypes, Model, Optional } from 'sequelize';
 import { appDB } from '../../loaders/appDB';
-import { GroupModel } from './gropuModel';
+import { GroupModel } from './groupModel';
 import { UserModel } from './userModel';
 
 export class UserGroupModel extends Model {
   declare id: number;
   declare group_id: string;
   declare user_id: string;
+  declare edit: boolean;
 }
 
 UserGroupModel.init(
   {
     id: {
-      type: DataTypes.INTEGER.UNSIGNED,
+      type: DataTypes.INTEGER,
       autoIncrement: true,
       primaryKey: true,
     },
@@ -24,6 +25,10 @@ UserGroupModel.init(
       type: DataTypes.STRING,
       allowNull: false,
     },
+    edit: {
+      field: 'edit',
+      type: DataTypes.BOOLEAN
+    }
   },
   {
     sequelize: appDB,

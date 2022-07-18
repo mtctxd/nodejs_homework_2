@@ -1,6 +1,6 @@
 import express, { Application } from 'express';
 import appConfig from '../config';
-import { GroupModel } from '../v1/models/gropuModel';
+import { GroupModel } from '../v1/models/groupModel';
 import { UserGroupModel } from '../v1/models/userGroupModel';
 import { UserModel } from '../v1/models/userModel';
 import groupRouter from '../v1/routers/groupRouter';

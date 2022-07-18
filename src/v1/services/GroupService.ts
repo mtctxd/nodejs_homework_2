@@ -6,9 +6,10 @@ import { Group, GroupCreateProperties } from '../types';
 import { v4 as uuid } from 'uuid';
 import { FindOptions, Op } from 'sequelize';
 import { Request } from 'express';
-import { GroupCreationAttributes, GroupModel } from '../models/gropuModel';
+import { GroupCreationAttributes, GroupModel } from '../models/groupModel';
 import { UserModel } from '../models/userModel';
 import { userService } from './UserService';
+import { UserGroupModel } from '../models/userGroupModel';
 
 class GroupService<
   T extends typeof GroupModel,
@@ -50,6 +51,11 @@ class GroupService<
     const newGroup = await this.model.create(newGroupData);
     const user = await userService.getByPK(1);
 
+    await UserGroupModel.create({
+      user_id: 1,
+      group_id,
+    });
+
     // newGroup.addUser(1);
 
     // this.addUsersToModel(newGroup, reqBody);
@@ -66,7 +72,27 @@ class GroupService<
       throw new Error('not found');
     }
 
-    const updatedGroup = item.update(reqBody);
+    const updatedGroup = await item.update(reqBody);
+    updatedGroup.group_id;
+
+    const user = await userService.getByPK(2);
+
+    // await UserGroupModel.create({
+    //   user_id: user?.user_id,
+    //   group_id: updatedGroup.group_id,
+    // });
+
+    if (user) {
+      console.log(await Object.getOwnPropertyNames(updatedGroup))
+      // await updatedGroup.addUser(user, {through: {
+      //   edit: true,
+      // }});
+      // const userssss = await updatedGroup.getUsers();
+      // console.log(userssss);
+    }
+
+    // console.log(await updatedGroup.countUsers());
+    // this.addUsersToModel(updatedGroup, reqBody);
 
     return updatedGroup;
   };
@@ -128,7 +154,7 @@ class GroupService<
 
   protected addUsersToModel = async (
     model: GroupModel,
-    { users }: Required<U>
+    { users }: Partial<U> | U
   ): Promise<void> => {
     if (users) {
       const usersToAdd: UserModel[] = await UserModel.findAll({

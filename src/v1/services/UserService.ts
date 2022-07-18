@@ -4,7 +4,7 @@ import { User, UserCreateProperties } from '../types';
 import { v4 as uuid } from 'uuid';
 import { FindOptions, Op } from 'sequelize';
 import { Request } from 'express';
-import { GroupModel } from '../models/gropuModel';
+import { GroupModel } from '../models/groupModel';
 
 class UserService<
   T extends typeof UserModel,
