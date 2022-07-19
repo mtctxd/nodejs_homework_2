@@ -19,7 +19,7 @@ class Controller<T extends typeof userService | typeof groupService> {
   };
 
   public getByID = async (req: Request, res: Response, next: NextFunction) => {
-    const item = await this.service.getByPK(+req.params.id);
+    const item = await this.service.getByPK(req.params.id);
 
     res.status(HTTP_STATUS.OK_200).send(item || []);
   };
@@ -34,7 +34,7 @@ class Controller<T extends typeof userService | typeof groupService> {
 
   public update = async (req: Request, res: Response, next: NextFunction) => {
     this.warpWithErrorHandling(res, async () => {
-      const item = await this.service.update(+req.params.id, req.body);
+      const item = await this.service.update(req.params.id, req.body);
 
       res.status(HTTP_STATUS.ACCEPTED_202).send(item);
     });

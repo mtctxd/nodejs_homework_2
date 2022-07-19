@@ -5,6 +5,7 @@ import { v4 as uuid } from 'uuid';
 import { FindOptions, Op } from 'sequelize';
 import { Request } from 'express';
 import { GroupModel } from '../models/groupModel';
+import { groupService } from './GroupService';
 
 class UserService<
   T extends typeof UserModel,
@@ -26,7 +27,7 @@ class UserService<
     return items;
   };
 
-  public getByPK = async (id: number) => {
+  public getByPK = async (id: string) => {
     const item = await this.model.findByPk(id, {
       include: [
         {
@@ -48,12 +49,12 @@ class UserService<
     };
 
     const newUser = await this.model.create(newUserData);
-    await this.addGroupsToUsers(newUser, reqBody)
+    await this.addGroupsToUsers(newUser, reqBody);
 
     return newUser;
   };
 
-  public update = async (id: number, reqBody: Partial<U>) => {
+  public update = async (id: string, reqBody: Partial<U>) => {
     await this.validateRequestBody(reqBody, 'update');
 
     const item = await this.getByPK(id);
@@ -133,15 +134,13 @@ class UserService<
     { groups }: Partial<U> | U
   ): Promise<void> => {
     if (groups) {
-      const usersToAdd: GroupModel[] = await GroupModel.findAll({
-        where: {
-          group_id: {
-            [Op.any]: groups,
-          },
-        },
-      });
-      
-      await model.addGroupModels(usersToAdd);
+      const groupsToAdd = (
+        await Promise.all(
+          groups.map(async (group) => await groupService.getByPK(group))
+        )
+      ).filter(Boolean) as GroupModel[];
+
+      await model.addGroupModels(groupsToAdd);
     }
   };
 }

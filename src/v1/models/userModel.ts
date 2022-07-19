@@ -14,16 +14,17 @@ import {
   Model,
   NonAttribute,
   Optional,
+  Sequelize,
+  UUIDV4,
 } from 'sequelize';
 import { appDB } from '../../loaders/appDB';
 
 import { User } from '../types';
 import { GroupModel } from './groupModel';
 
-export type UserCreationAttributes = Optional<User, 'id' | 'is_deleted'>;
+export type UserCreationAttributes = Optional<User, 'is_deleted'>;
 
 export class UserModel extends Model<User, UserCreationAttributes> {
-  declare id: number;
   declare user_id: string;
   declare login: string;
   declare password: string;
@@ -50,14 +51,10 @@ export class UserModel extends Model<User, UserCreationAttributes> {
 
 UserModel.init(
   {
-    id: {
-      type: DataTypes.INTEGER,
-      autoIncrement: true,
-      primaryKey: true,
-    },
     user_id: {
       type: DataTypes.STRING,
       allowNull: false,
+      primaryKey: true,
     },
     login: {
       type: DataTypes.STRING,

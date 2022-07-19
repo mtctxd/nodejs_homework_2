@@ -1,13 +1,11 @@
-import {
-  groupValidator,
-  userValidator,
-} from '../middlewares/validator/Validator';
+import { groupValidator } from '../middlewares/validator/Validator';
 import { Group, GroupCreateProperties } from '../types';
 import { v4 as uuid } from 'uuid';
 import { FindOptions, Op } from 'sequelize';
 import { Request } from 'express';
 import { GroupCreationAttributes, GroupModel } from '../models/groupModel';
 import { UserModel } from '../models/userModel';
+import { userService } from './UserService';
 
 class GroupService<
   T extends typeof GroupModel,
@@ -29,7 +27,7 @@ class GroupService<
     return items;
   };
 
-  public getByPK = async (id: number) => {
+  public getByPK = async (id: string) => {
     const item = await this.model.findByPk(id, {
       include: [
         {
@@ -59,17 +57,17 @@ class GroupService<
     return newGroup;
   };
 
-  public update = async (id: number, reqBody: Partial<U>) => {
+  public update = async (id: string, reqBody: Partial<U>) => {
     await this.validateRequestBody(reqBody, 'update');
-    
+
     const item = await this.getByPK(id);
-    
+
     if (!item) {
       throw new Error('not found');
     }
-    
+
     const updatedGroup = await item.update(reqBody);
-    
+
     await this.addUsersToGroup(updatedGroup, reqBody);
 
     return updatedGroup;
@@ -137,14 +135,12 @@ class GroupService<
     { users }: Partial<U> | U
   ): Promise<void> => {
     if (users) {
-      const usersToAdd: UserModel[] = await UserModel.findAll({
-        where: {
-          user_id: {
-            [Op.any]: users,
-          },
-        },
-      });
-      
+      const usersToAdd = (
+        await Promise.all(
+          users.map(async (user) => await userService.getByPK(user))
+        )
+      ).filter(Boolean) as UserModel[];
+
       await model.addUserModels(usersToAdd);
     }
   };

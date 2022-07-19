@@ -9,7 +9,6 @@ const passwordRules = {
 };
 
 const userSchema = {
-  id: z.undefined(),
   user_id: z.undefined(),
   is_deleted: z.undefined(),
   login: z.string().trim().min(6).max(21),
@@ -21,7 +20,6 @@ const userSchema = {
 };
 
 const userSchemaOptional = {
-  id: z.undefined(),
   user_id: z.undefined(),
   is_deleted: z.undefined(),
   login: z.string().trim().min(6).max(21).optional(),

@@ -6,7 +6,6 @@ import {
 } from '../../../types';
 
 const groupSchema = {
-  id: z.undefined(),
   group_id: z.undefined(),
   name: z.string().min(6).max(16),
   premissions: z.array(z.enum(premisionTypes)),
@@ -14,7 +13,6 @@ const groupSchema = {
 };
 
 const groupSchemaOptional = {
-  id: z.undefined().optional(),
   group_id: z.undefined().optional(),
   name: z.string().min(6).max(16).optional(),
   premissions: z.array(z.enum(premisionTypes)).optional(),

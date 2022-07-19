@@ -9,27 +9,25 @@ export const premisionTypes = [
 export type Premission = typeof premisionTypes[number];
 
 export type User = {
-  id: number;
   user_id: string;
   login: string;
   password: string;
   age: number;
   is_deleted: boolean;
-  groups?: string[]
+  groups?: string[];
 };
 
 export type Group = {
-  id: number;
   group_id: string;
   name: string;
   premissions: Array<Premission>;
-  users?: string[],
+  users?: string[];
 };
 
-export type UserCreateProperties = Omit<User, 'id' | 'is_deleted' | 'user_id'>;
+export type UserCreateProperties = Omit<User, 'is_deleted' | 'user_id'>;
 export type UserUpdateProperties = Partial<UserCreateProperties>;
 
-export type GroupCreateProperties = Omit<Group, 'id' | 'group_id'>;
+export type GroupCreateProperties = Omit<Group, 'group_id'>;
 export type GroupUpdateProperties = Partial<GroupCreateProperties>;
 
 export type UniqueUserKey = keyof Pick<UserCreateProperties, 'login'>;

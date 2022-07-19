@@ -14,16 +14,16 @@ import {
   Model,
   NonAttribute,
   Optional,
+  UUIDV4,
 } from 'sequelize';
 import { appDB } from '../../loaders/appDB';
 
 import { Premission, Group } from '../types';
 import { UserModel } from './userModel';
 
-export type GroupCreationAttributes = Optional<Group, 'id' | 'group_id'>;
+export type GroupCreationAttributes = Optional<Group, 'group_id'>;
 
 export class GroupModel extends Model<Group, GroupCreationAttributes> {
-  declare id: number;
   declare group_id: string;
   declare name: string;
   declare premissions: Premission[];
@@ -48,14 +48,10 @@ export class GroupModel extends Model<Group, GroupCreationAttributes> {
 
 GroupModel.init(
   {
-    id: {
-      type: DataTypes.INTEGER,
-      autoIncrement: true,
-      primaryKey: true,
-    },
     group_id: {
       type: DataTypes.STRING,
       allowNull: false,
+      primaryKey: true,
     },
     name: {
       type: DataTypes.STRING,
