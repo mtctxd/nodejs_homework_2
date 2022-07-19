@@ -54,7 +54,7 @@ class GroupService<
 
     await this.addUsersToGroup(newGroup, reqBody);
 
-    return newGroup;
+    return await this.getByPK(group_id);
   };
 
   public update = async (id: string, reqBody: Partial<U>) => {
@@ -70,7 +70,7 @@ class GroupService<
 
     await this.addUsersToGroup(updatedGroup, reqBody);
 
-    return updatedGroup;
+    return await this.getByPK(updatedGroup.group_id);
   };
 
   public delete = async (id: number) => {

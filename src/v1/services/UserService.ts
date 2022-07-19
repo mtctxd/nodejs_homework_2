@@ -51,7 +51,7 @@ class UserService<
     const newUser = await this.model.create(newUserData);
     await this.addGroupsToUsers(newUser, reqBody);
 
-    return newUser;
+    return await this.getByPK(user_id);
   };
 
   public update = async (id: string, reqBody: Partial<U>) => {
@@ -67,7 +67,7 @@ class UserService<
 
     await this.addGroupsToUsers(updatedUser, reqBody);
 
-    return updatedUser;
+    return await this.getByPK(updatedUser.user_id);
   };
 
   public delete = async (id: number) => {

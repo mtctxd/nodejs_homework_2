@@ -3,61 +3,68 @@ import { HTTP_STATUS } from '../../types';
 import { groupService } from '../services/GroupService';
 import { userService } from '../services/UserService';
 
-class Controller<T extends typeof userService | typeof groupService> {
-  public service: T;
+const ErrorCatchable =
+  (metadata: any = {}) =>
+  (_target: any, _propertyKey: string, descriptor: PropertyDescriptor) => {
+    const fn = descriptor.value;
 
-  constructor(service: T) {
+    descriptor.value = (req: Request, res: Response, next: NextFunction) => {
+      try {
+        fn.call(this, req, res, next);
+      } catch (error) {
+        console.error({
+          type: 'controller error',
+          info: JSON.stringify(error),
+        });
+        res
+          .status(HTTP_STATUS.BAD_REQUEST_400)
+          .send({ message: 'Bad Request', details: error });
+      }
+    };
+  };
+
+class Controller<T extends typeof userService | typeof groupService> {
+  constructor(protected readonly service: T) {
     this.service = service;
   }
 
-  public getAll = async (req: Request, res: Response, next: NextFunction) => {
-    this.warpWithErrorHandling(res, async () => {
-      const items = await this.service.getAll(req);
+  @ErrorCatchable()
+  public async getAll(req: Request, res: Response, next: NextFunction) {
+    console.log(this);
 
-      res.status(HTTP_STATUS.OK_200).send(items);
-    });
-  };
+    const items = await this.service.getAll(req);
 
-  public getByID = async (req: Request, res: Response, next: NextFunction) => {
+    res.status(HTTP_STATUS.OK_200).send(items);
+  }
+
+  @ErrorCatchable()
+  public async getByID(req: Request, res: Response, next: NextFunction) {
+    console.log(this);
     const item = await this.service.getByPK(req.params.id);
 
     res.status(HTTP_STATUS.OK_200).send(item || []);
-  };
+  }
 
-  public create = async (req: Request, res: Response, next: NextFunction) => {
-    this.warpWithErrorHandling(res, async () => {
-      const item = await this.service.create(req.body);
+  @ErrorCatchable()
+  public async create(req: Request, res: Response, next: NextFunction) {
+    const item = await this.service.create(req.body);
 
-      res.status(HTTP_STATUS.CREATED_201).send(item);
-    });
-  };
+    res.status(HTTP_STATUS.CREATED_201).send(item);
+  }
 
-  public update = async (req: Request, res: Response, next: NextFunction) => {
-    this.warpWithErrorHandling(res, async () => {
-      const item = await this.service.update(req.params.id, req.body);
+  @ErrorCatchable()
+  public async update(req: Request, res: Response, next: NextFunction) {
+    const item = await this.service.update(req.params.id, req.body);
 
-      res.status(HTTP_STATUS.ACCEPTED_202).send(item);
-    });
-  };
+    res.status(HTTP_STATUS.ACCEPTED_202).send(item);
+  }
 
-  public delete = async (req: Request, res: Response, next: NextFunction) => {
-    this.warpWithErrorHandling(res, async () => {
-      const item = await this.service.delete(+req.params.id);
+  @ErrorCatchable()
+  public async delete(req: Request, res: Response, next: NextFunction) {
+    const item = await this.service.delete(+req.params.id);
 
-      res.status(HTTP_STATUS.ACCEPTED_202).send(item);
-    });
-  };
-
-  private warpWithErrorHandling = async (res: Response, f: Function) => {
-    try {
-      await f();
-    } catch (error) {
-      console.error({ type: 'controller error', info: JSON.stringify(error) });
-      res
-        .status(HTTP_STATUS.BAD_REQUEST_400)
-        .send({ message: 'Bad Request', details: error });
-    }
-  };
+    res.status(HTTP_STATUS.ACCEPTED_202).send(item);
+  }
 }
 
 export const userController = new Controller(userService);

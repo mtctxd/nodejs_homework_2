@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "ts-node-dev --respawn src/index.ts",
-    "dev:debug": "ts-node-dev --respawn --inspect -- src/index.ts"
+    "dev:debug": "ts-node-dev --respawn --inspect -- src/index.ts",
+    "dev:test": "ts-node-dev --respawn src/test.ts"
   },
   "repository": {
     "type": "git",
