@@ -1,43 +1,10 @@
 import { NextFunction, Request, Response } from 'express';
 import { Logger } from 'winston';
+import ErrorCatchable from '../../decorators/ErrorCatchable';
 import { logerCreator } from '../../feature/logger';
 import { HTTP_STATUS } from '../../types';
 import { groupService } from '../services/GroupService';
 import { userService } from '../services/UserService';
-
-// const ErrorCatchable =
-//   (metadata: any = {}) =>
-//   (_target: any, _propertyKey: string, descriptor: PropertyDescriptor) => {
-//     const fn = descriptor.value;
-//     console.log(_target, _propertyKey);
-    
-
-//     descriptor.value = (req: Request, res: Response, next: NextFunction) => {
-//       try {        
-//         fn.call(req, res, next);
-//       } catch (error) {
-//         console.error({
-//           type: 'controller error',
-//           info: JSON.stringify(error),
-//         });
-//         res
-//           .status(HTTP_STATUS.BAD_REQUEST_400)
-//           .send({ message: 'Bad Request', details: error });
-//       }
-//     };
-//   };
-
-const ErrorCatchable =
-  (metadata: any = {}) =>
-  (_target: any, _propertyKey: string, descriptor: PropertyDescriptor) => {
-    const childF = descriptor.value;
-
-    descriptor.value = (...args: any[]) => {
-        childF.call(this, args);
-    };
-  };
-
-
 
 /**
  * You need to bind callback in router
@@ -56,35 +23,35 @@ class Controller<T extends typeof userService | typeof groupService> {
     this.logger = logger;
   }
 
-  @ErrorCatchable().bind(this)
+  @ErrorCatchable()
   public async getAll(req: Request, res: Response, next: NextFunction) {
     const items = await this.service.getAll(req);
 
     res.status(HTTP_STATUS.OK_200).send(items);
   }
 
-  // @ErrorCatchable()
+  @ErrorCatchable()
   public async getByID(req: Request, res: Response, next: NextFunction) {
     const item = await this.service.getByPK(req.params.id);
 
     res.status(HTTP_STATUS.OK_200).send(item || []);
   }
 
-  // @ErrorCatchable()
+  @ErrorCatchable()
   public async create(req: Request, res: Response, next: NextFunction) {
     const item = await this.service.create(req.body);
 
     res.status(HTTP_STATUS.CREATED_201).send(item);
   }
 
-  // @ErrorCatchable()
+  @ErrorCatchable()
   public async update(req: Request, res: Response, next: NextFunction) {
     const item = await this.service.update(req.params.id, req.body);
 
     res.status(HTTP_STATUS.ACCEPTED_202).send(item);
   }
 
-  // @ErrorCatchable()
+  @ErrorCatchable()
   public async delete(req: Request, res: Response, next: NextFunction) {
     const item = await this.service.delete(+req.params.id);
 
