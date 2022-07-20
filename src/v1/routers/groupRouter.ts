@@ -4,11 +4,11 @@ import { groupController } from '../controllers';
 const groupRouter = Router();
 
 (async () => {
-  groupRouter.get('/', groupController.getAll.bind(groupController));
-  groupRouter.get('/:id', groupController.getByID.bind(groupController));
-  groupRouter.post('/', groupController.create.bind(groupController));
-  groupRouter.put('/:id', groupController.update.bind(groupController));
-  groupRouter.delete('/:id', groupController.delete.bind(groupController));
+  groupRouter.get('/', (...args) => groupController.getAll(...args));
+  groupRouter.get('/:id', (...args) => groupController.getByID(...args));
+  groupRouter.post('/', (...args) => groupController.create(...args));
+  groupRouter.put('/:id', (...args) => groupController.update(...args));
+  groupRouter.delete('/:id', (...args) => groupController.delete(...args));
 })();
 
 export default groupRouter;

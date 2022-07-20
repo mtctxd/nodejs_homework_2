@@ -6,11 +6,11 @@ const userRouter = Router();
 
 
 (async () => {
-  userRouter.get('/', userController.getAll.bind(userController));
-  userRouter.get('/:id', userController.getByID.bind(userController));
-  userRouter.post('/', userController.create.bind(userController));
-  userRouter.put('/:id', userController.update.bind(userController));
-  userRouter.delete('/:id', userController.delete.bind(userController));
+  userRouter.get('/', (...args) => userController.getAll(...args));
+  userRouter.get('/:id', (...args) => userController.getByID(...args));
+  userRouter.post('/', (...args) => userController.create(...args));
+  userRouter.put('/:id', (...args) => userController.update(...args));
+  userRouter.delete('/:id', (...args) => userController.delete(...args));
 })();
 
 export default userRouter;

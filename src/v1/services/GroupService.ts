@@ -73,7 +73,7 @@ class GroupService<
     return await this.getByPK(updatedGroup.group_id);
   };
 
-  public delete = async (id: number) => {
+  public delete = async (id: string) => {
     const item = await this.model.findByPk(id);
 
     item?.destroy();

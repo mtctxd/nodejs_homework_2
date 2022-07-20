@@ -6,18 +6,11 @@ import { HTTP_STATUS } from '../../types';
 import { groupService } from '../services/GroupService';
 import { userService } from '../services/UserService';
 
-/**
- * You need to bind callback in router
- * because you loosing context.
- * The reason is because of using decorators i could not use arrow functions on methods, so i will not loose function descriptor
- *
- * @example userRouter.get('/', userController.getAll.bind(userController));
- */
 
-class Controller<T extends typeof userService | typeof groupService> {
+export class Controller<T extends typeof userService | typeof groupService> {
   constructor(
     protected readonly service: T,
-    protected readonly logger: Logger
+    public readonly logger: Logger
   ) {
     this.service = service;
     this.logger = logger;
@@ -53,7 +46,7 @@ class Controller<T extends typeof userService | typeof groupService> {
 
   @ErrorCatchable()
   public async delete(req: Request, res: Response, next: NextFunction) {
-    const item = await this.service.delete(+req.params.id);
+    const item = await this.service.delete(req.params.id);
 
     res.status(HTTP_STATUS.ACCEPTED_202).send(item);
   }

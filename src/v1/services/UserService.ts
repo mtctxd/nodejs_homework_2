@@ -72,7 +72,7 @@ class UserService<
     return await this.getByPK(updatedUser.user_id);
   };
 
-  public delete = async (id: number) => {
+  public delete = async (id: string) => {
     const item = await this.model.findByPk(id);
 
     item?.update({

@@ -6,6 +6,11 @@ export const premisionTypes = [
   'UPLOAD_FILES',
 ] as const;
 
+export enum LoggingTypes {
+  Error = 'error',
+  Info = 'info'
+}
+
 export type Premission = typeof premisionTypes[number];
 
 export type User = {
