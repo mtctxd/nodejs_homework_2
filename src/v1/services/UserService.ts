@@ -6,6 +6,8 @@ import { FindOptions, Op } from 'sequelize';
 import { Request } from 'express';
 import { GroupModel } from '../models/groupModel';
 import { groupService } from './GroupService';
+import { Logger } from 'winston';
+import { logerCreator } from '../../feature/logger';
 
 class UserService<
   T extends typeof UserModel,

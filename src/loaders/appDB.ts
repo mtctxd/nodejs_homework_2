@@ -6,6 +6,7 @@ const { database, username, password, host, dialect } = appConfig.db;
 export const appDB = new Sequelize(database, username, password, {
   host,
   dialect,
+  logging: false,
 });
 
 export const initDB = async () => {
