@@ -39,3 +39,5 @@ export const logerCreator = (serviceName: string) => {
 
   return logger;
 };
+
+export const appLogger = logerCreator('app');

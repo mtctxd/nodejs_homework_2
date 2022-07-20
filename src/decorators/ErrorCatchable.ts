@@ -30,7 +30,7 @@ function ErrorCatchable() {
         });
       } catch (error) {
         logger.error(LoggingTypes.Error, {
-          type: 'controller error',
+          type: 'controller_error',
           service_method: propertyName,
           params_passed,
           error_data: JSON.stringify(error),

@@ -1,11 +1,12 @@
 import express, { Application } from 'express';
 import appConfig from '../config';
+import { appLogger } from '../feature/logger';
 import { GroupModel } from '../v1/models/groupModel';
 import { UserGroupModel } from '../v1/models/userGroupModel';
 import { UserModel } from '../v1/models/userModel';
 import groupRouter from '../v1/routers/groupRouter';
 import userRouter from '../v1/routers/userRouter';
-import { GroupCreateProperties } from '../v1/types';
+import { GroupCreateProperties, LoggingTypes } from '../v1/types';
 
 const mockUsers = [
   {
@@ -54,11 +55,11 @@ const initExpress = (app: Application) => {
 
   app.get('/v1/drop', async (req, res, next) => {
     try {
-      await UserModel.drop({cascade: true});
+      await UserModel.drop({ cascade: true });
       console.log('UserModel table droped');
-      await GroupModel.drop({cascade: true});
+      await GroupModel.drop({ cascade: true });
       console.log('GroupModel table droped');
-      await UserGroupModel.drop({cascade: true});
+      await UserGroupModel.drop({ cascade: true });
       console.log('UserGroup table droped');
 
       res.send('droped');
@@ -84,7 +85,7 @@ const initExpress = (app: Application) => {
       res.send({
         data: {
           users,
-          groups
+          groups,
         },
       });
     } catch (error) {
@@ -95,21 +96,26 @@ const initExpress = (app: Application) => {
 
   app.get('/v1/all', async (req, res) => {
     try {
-      const users = await UserModel.findAll({include: GroupModel})
-      const groups = await GroupModel.findAll({include: UserModel});
+      const users = await UserModel.findAll({ include: GroupModel });
+      const groups = await GroupModel.findAll({ include: UserModel });
 
-      res.send({data: {
-        users,
-        groups
-      }})
+      res.send({
+        data: {
+          users,
+          groups,
+        },
+      });
     } catch (error) {
-      console.error(error)
-      res.send(error)
+      console.error(error);
+      res.send(error);
     }
-  })
+  });
 
   app.listen(appConfig.express.port, () => {
-    console.log(`Server is started on port ${appConfig.express.port}`);
+    appLogger.log(
+      LoggingTypes.Info,
+      `Server is started on port ${appConfig.express.port}`
+    );
   });
 };
 
