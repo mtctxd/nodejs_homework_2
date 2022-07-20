@@ -20,13 +20,19 @@ function ErrorCatchable() {
         query: req.query,
         body: req.body,
         params: req.params,
-      }
+      };
 
       try {
+        const startTime = performance.now();
+
         await originalFunction.call(this, req, res, next);
+
+        const endTime = performance.now();
+
         logger.log(LoggingTypes.Info, {
           service_method: propertyName,
           params_passed,
+          time_to_process: (endTime - startTime).toFixed(3),
         });
       } catch (error) {
         logger.error(LoggingTypes.Error, {

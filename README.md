@@ -1,7 +1,6 @@
 ### thoughts
 
-- [ ] wierd classes
-- [ ] not shure how to validate response in controllers
+- [ ] same logic for services
+- [ ] not shure how to validate response as middleware or in services
 - [ ] better validation info
-- [ ] dry in schemas
 - [ ] type notation for validator is not correct!
