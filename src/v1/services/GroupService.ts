@@ -6,6 +6,8 @@ import { Request } from 'express';
 import { GroupCreationAttributes, GroupModel } from '../models/groupModel';
 import { UserModel } from '../models/userModel';
 import { userService } from './UserService';
+import { prepareServiceError } from '../../feature/prepareServiceError';
+import { HTTP_STATUS } from '../../types';
 
 class GroupService<
   T extends typeof GroupModel,
@@ -63,7 +65,7 @@ class GroupService<
     const item = await this.getByPK(id);
 
     if (!item) {
-      throw new Error('not found');
+      throw prepareServiceError(HTTP_STATUS.NOT_FOUND_404, 'group not found');
     }
 
     const updatedGroup = await item.update(reqBody);
@@ -88,11 +90,18 @@ class GroupService<
     const validationInfo = this.validator.validate(reqBody, key);
 
     if (!validationInfo?.success) {
-      throw validationInfo?.error.issues;
+      throw prepareServiceError(
+        HTTP_STATUS.BAD_REQUEST_400,
+        'validation error',
+        [validationInfo?.error.issues]
+      );
     }
 
     if (reqBody.name && (await this.uniqueFieldUsed(reqBody.name))) {
-      throw [{ message: `this name already taken` }];
+      throw prepareServiceError(
+        HTTP_STATUS.BAD_REQUEST_400,
+        'this name already used'
+      );
     }
   };
 

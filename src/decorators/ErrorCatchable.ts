@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { Logger } from 'winston';
 import { HTTP_STATUS } from '../types';
-import { LoggingTypes } from '../v1/types';
+import { LoggingTypes, ServiceError } from '../v1/types';
 
 function ErrorCatchable() {
   return function (
@@ -25,16 +25,18 @@ function ErrorCatchable() {
       try {
         const startTime = performance.now();
 
-        await originalFunction.call(this, req, res, next);
+        const { code } = await originalFunction.call(this, req, res, next);
 
-        const endTime = performance.now();
+        const endTime = performance.now();     
 
         logger.log(LoggingTypes.Info, {
+          satus_code: code,
           service_method: propertyName,
           params_passed,
           time_to_process: (endTime - startTime).toFixed(3),
         });
       } catch (error) {
+        const customError = error as ServiceError;
         logger.error(LoggingTypes.Error, {
           type: 'controller_error',
           service_method: propertyName,
@@ -42,10 +44,8 @@ function ErrorCatchable() {
           error_data: JSON.stringify(error),
         });
         res
-          .status(
-            HTTP_STATUS.BAD_REQUEST_400 || HTTP_STATUS.INTERNAL_SERVER_ERROR_500
-          )
-          .send({ message: 'Bad Request', details: error });
+          .status(customError.status || HTTP_STATUS.INTERNAL_SERVER_ERROR_500)
+          .send(error);
       }
     };
   };

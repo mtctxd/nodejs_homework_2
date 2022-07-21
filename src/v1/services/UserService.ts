@@ -6,8 +6,8 @@ import { FindOptions, Op } from 'sequelize';
 import { Request } from 'express';
 import { GroupModel } from '../models/groupModel';
 import { groupService } from './GroupService';
-import { Logger } from 'winston';
-import { logerCreator } from '../../feature/logger';
+import { HTTP_STATUS } from '../../types';
+import { prepareServiceError } from '../../feature/prepareServiceError';
 
 class UserService<
   T extends typeof UserModel,
@@ -62,7 +62,7 @@ class UserService<
     const item = await this.getByPK(id);
 
     if (!item) {
-      throw new Error('not found');
+      throw prepareServiceError(HTTP_STATUS.NOT_FOUND_404, 'user not found');
     }
 
     const updatedUser = await item.update(reqBody);
@@ -89,11 +89,18 @@ class UserService<
     const validationInfo = this.validator.validate(reqBody, key);
 
     if (!validationInfo?.success) {
-      throw validationInfo?.error.issues;
+      throw prepareServiceError(
+        HTTP_STATUS.BAD_REQUEST_400,
+        'validation error',
+        [validationInfo?.error.issues]
+      );
     }
 
     if (reqBody.login && (await this.uniqueFieldUsed(reqBody.login))) {
-      throw [{ message: `this login already taken` }];
+      throw prepareServiceError(
+        HTTP_STATUS.BAD_REQUEST_400,
+        'this login already used'
+      );
     }
   };
 

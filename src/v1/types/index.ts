@@ -1,3 +1,5 @@
+import { HTTP_STATUS } from '../../types';
+
 export const premisionTypes = [
   'READ',
   'WRITE',
@@ -8,7 +10,15 @@ export const premisionTypes = [
 
 export enum LoggingTypes {
   Error = 'error',
-  Info = 'info'
+  Info = 'info',
+}
+
+export interface ServiceError {
+  status: HTTP_STATUS;
+  info: {
+    message: string,
+    data?: any
+  };
 }
 
 export type Premission = typeof premisionTypes[number];
