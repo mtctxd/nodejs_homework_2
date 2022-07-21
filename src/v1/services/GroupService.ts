@@ -1,13 +1,13 @@
-import { groupValidator } from '../middlewares/validator/Validator';
-import { Group, GroupCreateProperties } from '../types';
-import { v4 as uuid } from 'uuid';
-import { FindOptions, Op } from 'sequelize';
-import { Request } from 'express';
-import { GroupCreationAttributes, GroupModel } from '../models/groupModel';
-import { UserModel } from '../models/userModel';
-import { userService } from './UserService';
-import { prepareServiceError } from '../../feature/prepareServiceError';
-import { HTTP_STATUS } from '../../types';
+import { groupValidator } from "../middlewares/validator/Validator";
+import { Group, GroupCreateProperties } from "../types";
+import { v4 as uuid } from "uuid";
+import { FindOptions, Op } from "sequelize";
+import { Request } from "express";
+import { GroupCreationAttributes, GroupModel } from "../models/groupModel";
+import { UserModel } from "../models/userModel";
+import { userService } from "./UserService";
+import { prepareServiceError } from "../../feature/prepareServiceError";
+import { HTTP_STATUS } from "../../types";
 
 class GroupService<
   T extends typeof GroupModel,
@@ -42,7 +42,7 @@ class GroupService<
   };
 
   public create = async (reqBody: Required<U>) => {
-    await this.validateRequestBody(reqBody, 'create');
+    await this.validateRequestBody(reqBody, "create");
     const { name, premissions } = reqBody;
     const group_id = uuid();
 
@@ -60,12 +60,12 @@ class GroupService<
   };
 
   public update = async (id: string, reqBody: Partial<U>) => {
-    await this.validateRequestBody(reqBody, 'update');
+    await this.validateRequestBody(reqBody, "update");
 
     const item = await this.getByPK(id);
 
     if (!item) {
-      throw prepareServiceError(HTTP_STATUS.NOT_FOUND_404, 'group not found');
+      throw prepareServiceError(HTTP_STATUS.NOT_FOUND_404, "group not found");
     }
 
     const updatedGroup = await item.update(reqBody);
@@ -85,14 +85,14 @@ class GroupService<
 
   protected validateRequestBody = async (
     reqBody: Partial<U> | U,
-    key: 'create' | 'update'
+    key: "create" | "update"
   ) => {
     const validationInfo = this.validator.validate(reqBody, key);
 
     if (!validationInfo?.success) {
       throw prepareServiceError(
         HTTP_STATUS.BAD_REQUEST_400,
-        'validation error',
+        "validation error",
         [validationInfo?.error.issues]
       );
     }
@@ -100,7 +100,7 @@ class GroupService<
     if (reqBody.name && (await this.uniqueFieldUsed(reqBody.name))) {
       throw prepareServiceError(
         HTTP_STATUS.BAD_REQUEST_400,
-        'this name already used'
+        "this name already used"
       );
     }
   };
@@ -131,7 +131,7 @@ class GroupService<
       options.where = {
         ...options.where,
         name: {
-          [Op.iLike]: ('%' + name + '%') as string,
+          [Op.iLike]: ("%" + name + "%") as string,
         },
       };
     }

@@ -1,23 +1,23 @@
-import { HTTP_STATUS } from '../../types';
+import { HTTP_STATUS } from "../../types";
 
 export const premisionTypes = [
-  'READ',
-  'WRITE',
-  'DELETE',
-  'SHARE',
-  'UPLOAD_FILES',
+  "READ",
+  "WRITE",
+  "DELETE",
+  "SHARE",
+  "UPLOAD_FILES",
 ] as const;
 
 export enum LoggingTypes {
-  Error = 'error',
-  Info = 'info',
+  Error = "error",
+  Info = "info",
 }
 
 export interface ServiceError {
   status: HTTP_STATUS;
   info: {
-    message: string,
-    data?: unknown
+    message: string;
+    data?: unknown;
   };
 }
 
@@ -39,12 +39,12 @@ export type Group = {
   users?: string[];
 };
 
-export type UserCreateProperties = Omit<User, 'is_deleted' | 'user_id'>;
+export type UserCreateProperties = Omit<User, "is_deleted" | "user_id">;
 export type UserUpdateProperties = Partial<UserCreateProperties>;
 
-export type GroupCreateProperties = Omit<Group, 'group_id'>;
+export type GroupCreateProperties = Omit<Group, "group_id">;
 export type GroupUpdateProperties = Partial<GroupCreateProperties>;
 
-export type UniqueUserKey = keyof Pick<UserCreateProperties, 'login'>;
-export type UniqueGroupKey = keyof Pick<GroupCreateProperties, 'name'>;
+export type UniqueUserKey = keyof Pick<UserCreateProperties, "login">;
+export type UniqueGroupKey = keyof Pick<GroupCreateProperties, "name">;
 export type UniqueKeys = UniqueUserKey | UniqueGroupKey;

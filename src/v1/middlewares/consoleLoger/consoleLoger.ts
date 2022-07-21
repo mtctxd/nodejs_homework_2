@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from 'express';
+import { NextFunction, Request, Response } from "express";
 
 class ConsoleLoger {
   constructor(
@@ -10,7 +10,7 @@ class ConsoleLoger {
     this.res = res;
     this.next = next;
 
-    console.log('called');
+    console.log("called");
 
     return this;
   }

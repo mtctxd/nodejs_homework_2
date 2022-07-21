@@ -14,13 +14,13 @@ import {
   Model,
   NonAttribute,
   Optional,
-} from 'sequelize';
-import { appDB } from '../../loaders/appDB';
+} from "sequelize";
+import { appDB } from "../../loaders/appDB";
 
-import { User } from '../types';
-import { GroupModel } from './groupModel';
+import { User } from "../types";
+import { GroupModel } from "./groupModel";
 
-export type UserCreationAttributes = Optional<User, 'is_deleted'>;
+export type UserCreationAttributes = Optional<User, "is_deleted">;
 
 export class UserModel extends Model<User, UserCreationAttributes> {
   declare user_id: string;
@@ -30,11 +30,23 @@ export class UserModel extends Model<User, UserCreationAttributes> {
   declare is_deleted: boolean;
 
   declare getGroupModels: BelongsToManyGetAssociationsMixin<GroupModel>; // Note the null assertions!
-  declare addGroupModel: BelongsToManyAddAssociationMixin<GroupModel, UserModel>;
-  declare addGroupModels: BelongsToManyAddAssociationsMixin<GroupModel, UserModel>;
+  declare addGroupModel: BelongsToManyAddAssociationMixin<
+    GroupModel,
+    UserModel
+  >;
+  declare addGroupModels: BelongsToManyAddAssociationsMixin<
+    GroupModel,
+    UserModel
+  >;
   declare setGroupModels: BelongsToManySetAssociationsMixin<GroupModel, string>;
-  declare removeGroupModel: BelongsToManyRemoveAssociationMixin<GroupModel, string>;
-  declare removeGroupModels: BelongsToManyRemoveAssociationsMixin<GroupModel, string>;
+  declare removeGroupModel: BelongsToManyRemoveAssociationMixin<
+    GroupModel,
+    string
+  >;
+  declare removeGroupModels: BelongsToManyRemoveAssociationsMixin<
+    GroupModel,
+    string
+  >;
   declare hasGroupModel: BelongsToManyHasAssociationMixin<GroupModel, string>;
   declare hasGroupModels: BelongsToManyHasAssociationsMixin<GroupModel, string>;
   declare countGroupModels: BelongsToManyCountAssociationsMixin;
@@ -74,6 +86,6 @@ UserModel.init(
   },
   {
     sequelize: appDB,
-    tableName: 'users',
+    tableName: "users",
   }
 );

@@ -1,7 +1,7 @@
-import { Sequelize } from 'sequelize';
-import appConfig from '../config';
-import { appLogger } from '../feature/logger';
-import { LoggingTypes } from '../v1/types';
+import { Sequelize } from "sequelize";
+import appConfig from "../config";
+import { appLogger } from "../feature/logger";
+import { LoggingTypes } from "../v1/types";
 
 const { database, username, password, host, dialect } = appConfig.db;
 
@@ -18,7 +18,7 @@ export const initDB = async () => {
     await appDB.sync();
     appLogger.log(
       LoggingTypes.Info,
-      'Connection has been established successfully.'
+      "Connection has been established successfully."
     );
   } catch (error) {
     throw error;

@@ -1,13 +1,14 @@
-import { z } from 'zod';
-import { ValidationMethods } from '../../../types';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { z } from "zod";
+import { ValidationMethods } from "../../../types";
 import {
   GroupCreateProperties,
   GroupUpdateProperties,
   UserCreateProperties,
   UserUpdateProperties,
-} from '../../types';
-import groupValidationSchema from './schema/groupSchema';
-import userValidationSchema from './schema/userSchema';
+} from "../../types";
+import groupValidationSchema from "./schema/groupSchema";
+import userValidationSchema from "./schema/userSchema";
 
 type PlaceholderSchema = {
   create: z.Schema<any>;

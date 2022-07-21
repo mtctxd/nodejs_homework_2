@@ -1,16 +1,16 @@
-import { createLogger, format, transports } from 'winston';
-import dotenv from 'dotenv';
+import { createLogger, format, transports } from "winston";
+import dotenv from "dotenv";
 
-import { LoggingTypes } from '../v1/types';
+import { LoggingTypes } from "../v1/types";
 
 dotenv.config();
 
 export const logerCreator = (serviceName: string) => {
   const logger = createLogger({
-    level: 'info',
+    level: "info",
     format: format.combine(
       format.timestamp({
-        format: 'YYYY-MM-DD HH:mm:ss',
+        format: "YYYY-MM-DD HH:mm:ss",
       }),
       format.errors({ stack: true }),
       format.splat(),
@@ -29,7 +29,7 @@ export const logerCreator = (serviceName: string) => {
     ],
   });
 
-  if (process.env.NODE_ENV !== 'production') {
+  if (process.env.NODE_ENV !== "production") {
     logger.add(
       new transports.Console({
         format: format.combine(format.colorize(), format.simple()),
@@ -40,4 +40,4 @@ export const logerCreator = (serviceName: string) => {
   return logger;
 };
 
-export const appLogger = logerCreator('app');
+export const appLogger = logerCreator("app");

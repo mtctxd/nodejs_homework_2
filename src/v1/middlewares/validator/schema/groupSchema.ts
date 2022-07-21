@@ -1,9 +1,5 @@
-import { z } from 'zod';
-import {
-  GroupCreateProperties,
-  premisionTypes,
-  UserCreateProperties,
-} from '../../../types';
+import { z } from "zod";
+import { GroupCreateProperties, premisionTypes } from "../../../types";
 
 const groupSchema = {
   group_id: z.undefined(),

@@ -1,7 +1,7 @@
-import { NextFunction, Request, Response } from 'express';
-import { Logger } from 'winston';
-import { HTTP_STATUS } from '../types';
-import { LoggingTypes, ServiceError } from '../v1/types';
+import { NextFunction, Request, Response } from "express";
+import { Logger } from "winston";
+import { HTTP_STATUS } from "../types";
+import { LoggingTypes, ServiceError } from "../v1/types";
 
 function ErrorCatchable() {
   return function (
@@ -41,7 +41,7 @@ function ErrorCatchable() {
       } catch (error) {
         const customError = error as ServiceError;
         logger.error(LoggingTypes.Error, {
-          type: 'controller_error',
+          type: "controller_error",
           service_method: propertyName,
           params_passed,
           error_data: JSON.stringify(error),

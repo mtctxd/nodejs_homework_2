@@ -1,7 +1,7 @@
-import { DataTypes, Model } from 'sequelize';
-import { appDB } from '../../loaders/appDB';
-import { GroupModel } from './groupModel';
-import { UserModel } from './userModel';
+import { DataTypes, Model } from "sequelize";
+import { appDB } from "../../loaders/appDB";
+import { GroupModel } from "./groupModel";
+import { UserModel } from "./userModel";
 
 export class UserGroupModel extends Model {
   declare id: number;
@@ -27,17 +27,17 @@ UserGroupModel.init(
   },
   {
     sequelize: appDB,
-    tableName: 'user_group',
+    tableName: "user_group",
   }
 );
 
 UserModel.belongsToMany(GroupModel, {
   through: UserGroupModel,
-  foreignKey: 'user_id',
-  otherKey: 'group_id',
+  foreignKey: "user_id",
+  otherKey: "group_id",
 });
 GroupModel.belongsToMany(UserModel, {
   through: UserGroupModel,
-  foreignKey: 'group_id',
-  otherKey: 'user_id',
+  foreignKey: "group_id",
+  otherKey: "user_id",
 });
