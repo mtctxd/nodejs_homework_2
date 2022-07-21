@@ -53,7 +53,7 @@ const initExpress = (app: Application) => {
   app.use('/v1/user', userRouter);
   app.use('/v1/group', groupRouter);
 
-  app.get('/v1/drop', async (req, res, next) => {
+  app.get('/v1/drop', async (req, res) => {
     try {
       await UserModel.drop({ cascade: true });
       console.log('UserModel table droped');

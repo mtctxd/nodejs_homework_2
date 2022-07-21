@@ -6,7 +6,7 @@ import { LoggingTypes } from '../v1/types';
 dotenv.config();
 
 export const logerCreator = (serviceName: string) => {
-  let logger = createLogger({
+  const logger = createLogger({
     level: 'info',
     format: format.combine(
       format.timestamp({

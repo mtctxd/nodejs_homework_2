@@ -1,5 +1,5 @@
 import { Application } from 'express';
-import { appLogger, logerCreator } from '../feature/logger';
+import { appLogger } from '../feature/logger';
 import { LoggingTypes } from '../v1/types';
 import { initDB } from './appDB';
 import initExpress from './express';

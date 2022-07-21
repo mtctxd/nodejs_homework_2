@@ -12,6 +12,7 @@ export const appDB = new Sequelize(database, username, password, {
 });
 
 export const initDB = async () => {
+  // eslint-disable-next-line no-useless-catch
   try {
     await appDB.authenticate();
     await appDB.sync();

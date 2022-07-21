@@ -1,4 +1,4 @@
-import { DataTypes, Model, Optional } from 'sequelize';
+import { DataTypes, Model } from 'sequelize';
 import { appDB } from '../../loaders/appDB';
 import { GroupModel } from './groupModel';
 import { UserModel } from './userModel';

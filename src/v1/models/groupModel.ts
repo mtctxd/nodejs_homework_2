@@ -14,7 +14,6 @@ import {
   Model,
   NonAttribute,
   Optional,
-  UUIDV4,
 } from 'sequelize';
 import { appDB } from '../../loaders/appDB';
 

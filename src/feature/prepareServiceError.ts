@@ -1,7 +1,7 @@
 import { HTTP_STATUS } from '../types';
 import { ServiceError } from '../v1/types';
 
-export const prepareServiceError = (code: HTTP_STATUS, message: string, data: any[] = []) => {
+export const prepareServiceError = (code: HTTP_STATUS, message: string, data: unknown = []) => {
   const error: ServiceError = {
     status: code,
     info: {

@@ -17,7 +17,7 @@ export interface ServiceError {
   status: HTTP_STATUS;
   info: {
     message: string,
-    data?: any
+    data?: unknown
   };
 }
 

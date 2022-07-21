@@ -16,9 +16,12 @@ function ErrorCatchable() {
       next: NextFunction
     ) {
       const { logger } = this as { logger: Logger };
+      const body = req.body;
+      delete req.body.password;
+
       const params_passed = {
         query: req.query,
-        body: req.body,
+        body,
         params: req.params,
       };
 
@@ -27,7 +30,7 @@ function ErrorCatchable() {
 
         const { code } = await originalFunction.call(this, req, res, next);
 
-        const endTime = performance.now();     
+        const endTime = performance.now();
 
         logger.log(LoggingTypes.Info, {
           satus_code: code,
