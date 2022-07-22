@@ -10,8 +10,6 @@ class ConsoleLoger {
     this.res = res;
     this.next = next;
 
-    console.log("called");
-
     return this;
   }
 }

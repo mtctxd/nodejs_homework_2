@@ -23,6 +23,13 @@ class AuthService {
       );
     }
 
+    if (!login) {
+        throw prepareServiceError(
+          HTTP_STATUS.BAD_REQUEST_400,
+          'login required'
+        );
+      }
+    
     const user: UserModel = await this.userService.getByLogin(login);
     
 

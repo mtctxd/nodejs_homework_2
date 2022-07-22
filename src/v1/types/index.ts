@@ -1,5 +1,3 @@
-import { HTTP_STATUS } from '../../types';
-
 export const premisionTypes = [
   'READ',
   'WRITE',

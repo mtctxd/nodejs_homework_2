@@ -1,10 +1,10 @@
-import { Request, Response } from "express";
-import { Logger } from "winston";
-import ErrorCatchable from "../../decorators/ErrorCatchable";
-import { logerCreator } from "../../feature/logger";
-import { HTTP_STATUS } from "../../types";
-import { groupService } from "../services/GroupService";
-import { userService } from "../services/UserService";
+import { Request, Response } from 'express';
+import { Logger } from 'winston';
+import ErrorCatchable from '../../decorators/ErrorCatchable';
+import { loggerCreator } from '../../feature/logger';
+import { HTTP_STATUS } from '../../types';
+import { groupService } from '../services/GroupService';
+import { userService } from '../services/UserService';
 
 export class Controller<T extends typeof userService | typeof groupService> {
   constructor(protected readonly service: T, public readonly logger: Logger) {
@@ -63,8 +63,8 @@ export class Controller<T extends typeof userService | typeof groupService> {
   }
 }
 
-const userLogger = logerCreator("user_logger");
-const groupLogger = logerCreator("group_logger");
+const userLogger = loggerCreator('user_logger');
+const groupLogger = loggerCreator('group_logger');
 
 export const userController = new Controller(userService, userLogger);
 export const groupController = new Controller(groupService, groupLogger);

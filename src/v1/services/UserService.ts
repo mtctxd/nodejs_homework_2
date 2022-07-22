@@ -50,7 +50,6 @@ class UserService<
     
 
     if (user) {
-      
       return user;
     }
 
