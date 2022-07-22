@@ -8,7 +8,13 @@ import {
 } from '../types';
 import { LoggingTypes } from '../v1/types';
 
-function ErrorCatchable(metadata?: ErrorCatchableMetadata): any {
+function ErrorCatchable(
+  metadata?: ErrorCatchableMetadata
+): (
+  object: object,
+  propertyName: string,
+  descriptor: PropertyDescriptor
+) => void {
   switch (metadata?.type) {
     case ErrorCatchableTypes.AUTH:
       return processStandartError;
@@ -64,7 +70,6 @@ function processStandartError(
         error_data: JSON.stringify(error),
       });
 
-      
       res
         .status(customError.status || HTTP_STATUS.INTERNAL_SERVER_ERROR_500)
         .send(error);

@@ -5,3 +5,4 @@
 - [ ] better validation info
 - [ ] type notation for validator is not correct!
 - [x] should not log password
+- [ ] validation type notation is awful

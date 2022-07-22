@@ -5,6 +5,7 @@ import { UserModel } from '../models/userModel';
 import { Request } from 'express';
 import { prepareServiceError } from '../../feature/prepareServiceError';
 import { HTTP_STATUS } from '../../types';
+import { userValidator } from '../middlewares/validator/Validator';
 
 dotenv.config();
 
@@ -12,26 +13,12 @@ class AuthService {
   private accessKey = process.env.JWT_ACCESS || 'access';
   private refreshKey = process.env.JWT_ACCESS || 'refresh';
   private userService = userService;
+  private validator = userValidator;
 
   public async login(req: Request) {
     const { login, password } = req.body;
 
-    if (!password) {
-      throw prepareServiceError(
-        HTTP_STATUS.BAD_REQUEST_400,
-        'password required'
-      );
-    }
-
-    if (!login) {
-        throw prepareServiceError(
-          HTTP_STATUS.BAD_REQUEST_400,
-          'login required'
-        );
-      }
-    
     const user: UserModel = await this.userService.getByLogin(login);
-    
 
     if (password !== user.password) {
       throw prepareServiceError(
@@ -40,7 +27,13 @@ class AuthService {
       );
     }
 
-    return this.jswSign(user);
+    const token = this.jswSign(user);
+
+    return token;
+  }
+
+  public async register(req: Request) {
+    console.log('asd');
   }
 
   private jswSign(data: UserModel) {

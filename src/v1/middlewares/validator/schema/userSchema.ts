@@ -1,9 +1,9 @@
-import { z } from "zod";
-import { UserCreateProperties } from "../../../types";
+import { z } from 'zod';
+import { UserCreateProperties } from '../../../types';
 
 const passwordRules = {
   errorMessage:
-    "password shoulc contain between 6 and 16 characters, at least one number, special character",
+    'password shoulc contain between 6 and 16 characters, at least one number, special character',
   regexp: /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,16}$/,
 };
 
@@ -30,14 +30,22 @@ const userSchemaOptional = {
   age: z.number().int().min(12).max(120).optional(),
 };
 
+const userLoginSchema = {
+  login: z.string(),
+  password: z.string(),
+};
+
 const userCreateSchema: z.ZodSchema<UserCreateProperties> =
   z.object(userSchema);
 const userUpdataSchema: z.ZodSchema<Partial<UserCreateProperties>> =
   z.object(userSchemaOptional);
+const userLoginSchemaType: z.ZodSchema<Partial<UserCreateProperties>> =
+  z.object(userLoginSchema);
 
 const userValidationSchema = {
   create: userCreateSchema,
   update: userUpdataSchema,
+  login: userLoginSchemaType,
 };
 
 export type UserCreateSchemaType = z.infer<typeof userCreateSchema>;

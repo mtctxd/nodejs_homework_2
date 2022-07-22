@@ -12,8 +12,9 @@ export enum HTTP_STATUS {
 }
 
 export enum ValidationMethods {
-  CREATE = "create",
-  UPDATE = "update",
+  CREATE = 'create',
+  UPDATE = 'update',
+  LOGIN = 'login',
 }
 
 export enum ErrorCatchableTypes {
@@ -30,5 +31,5 @@ export interface ServiceError {
 }
 
 export type ErrorCatchableMetadata = {
-  type: ErrorCatchableTypes
-}
+  type: ErrorCatchableTypes;
+};

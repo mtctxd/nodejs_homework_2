@@ -47,7 +47,6 @@ class UserService<
         login,
       },
     });
-    
 
     if (user) {
       return user;
@@ -57,7 +56,15 @@ class UserService<
   };
 
   public create = async (reqBody: Required<U>) => {
-    await this.validateRequestBody(reqBody, 'create');
+    await this.validator.validateRequestBody(
+      reqBody,
+      await this.validator.uniqueFieldUsed(
+        reqBody.login as string,
+        'login',
+        this.model
+      ),
+      'create'
+    );
     const user_id = uuid();
 
     const newUserData = {
@@ -68,13 +75,21 @@ class UserService<
     let newUser = await this.model.create(newUserData);
     await this.addGroupsToUsers(newUser, reqBody);
 
-    newUser = await this.getByPK(user_id) as UserModel;
+    newUser = (await this.getByPK(user_id)) as UserModel;
 
     return newUser;
   };
 
   public update = async (id: string, reqBody: Partial<U>) => {
-    await this.validateRequestBody(reqBody, 'update');
+    await this.validator.validateRequestBody(
+      reqBody,
+      await this.validator.uniqueFieldUsed(
+        reqBody.login as string,
+        'login',
+        this.model
+      ),
+      'update'
+    );
 
     const item = await this.getByPK(id);
 
@@ -97,40 +112,6 @@ class UserService<
     });
 
     return item;
-  };
-
-  protected validateRequestBody = async (
-    reqBody: Partial<UserCreateProperties> | UserCreateProperties,
-    key: 'create' | 'update'
-  ) => {
-    const validationInfo = this.validator.validate(reqBody, key);
-
-    if (!validationInfo?.success) {
-      throw prepareServiceError(
-        HTTP_STATUS.BAD_REQUEST_400,
-        'validation error',
-        [validationInfo?.error.issues]
-      );
-    }
-
-    if (reqBody.login && (await this.uniqueFieldUsed(reqBody.login))) {
-      throw prepareServiceError(
-        HTTP_STATUS.BAD_REQUEST_400,
-        'this login already used'
-      );
-    }
-  };
-
-  protected uniqueFieldUsed = async (uniqueFieldKey: string) => {
-    const user = await this.model.findAll({
-      where: {
-        login: {
-          [Op.like]: uniqueFieldKey as string,
-        },
-      },
-    });
-
-    return user.length > 0;
   };
 
   protected applyQuery = ({ query }: Request) => {
