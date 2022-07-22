@@ -1,12 +1,12 @@
-import { NextFunction, Request, Response } from 'express';
-import { Logger } from 'winston';
+import { NextFunction, Request, Response } from "express";
+import { Logger } from "winston";
 import {
   ErrorCatchableMetadata,
   ErrorCatchableTypes,
   HTTP_STATUS,
   ServiceError,
-} from '../types';
-import { LoggingTypes } from '../v1/types';
+} from "../types";
+import { LoggingTypes } from "../v1/types";
 
 function ErrorCatchable(
   metadata?: ErrorCatchableMetadata
@@ -40,7 +40,7 @@ function processStandartError(
       ...req.body,
     };
 
-    body.password = '...';
+    body.password = "...";
 
     const params_passed = {
       query: req.query,
@@ -64,7 +64,7 @@ function processStandartError(
     } catch (error) {
       const customError = error as ServiceError;
       logger.error(LoggingTypes.Error, {
-        type: 'controller_error',
+        type: "controller_error",
         service_method: propertyName,
         params_passed,
         error_data: JSON.stringify(error),

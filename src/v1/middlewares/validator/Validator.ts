@@ -1,16 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Op } from 'sequelize';
-import { z } from 'zod';
-import { prepareServiceError } from '../../../feature/prepareServiceError';
-import { HTTP_STATUS, ValidationMethods } from '../../../types';
+import { Op } from "sequelize";
+import { z } from "zod";
+import { prepareServiceError } from "../../../feature/prepareServiceError";
+import { HTTP_STATUS, ValidationMethods } from "../../../types";
 import {
   GroupCreateProperties,
   GroupUpdateProperties,
   UserCreateProperties,
   UserUpdateProperties,
-} from '../../types';
-import groupValidationSchema from './schema/groupSchema';
-import userValidationSchema from './schema/userSchema';
+} from "../../types";
+import groupValidationSchema from "./schema/groupSchema";
+import userValidationSchema from "./schema/userSchema";
 
 type PlaceholderSchema = {
   create: z.Schema<any>;
@@ -64,15 +64,15 @@ class Validator {
       | Partial<UserCreateProperties | GroupCreateProperties>
       | UserCreateProperties
       | GroupCreateProperties,
-    isUniqueFieldUsed: boolean,
-    key: 'create' | 'update'
+    key: "create" | "update" | "login",
+    isUniqueFieldUsed: boolean
   ) => {
     const validationInfo = this.validate(reqBody, key);
 
     if (!validationInfo?.success) {
       throw prepareServiceError(
         HTTP_STATUS.BAD_REQUEST_400,
-        'validation error',
+        "validation error",
         [validationInfo?.error.issues]
       );
     }
@@ -80,12 +80,16 @@ class Validator {
     if (isUniqueFieldUsed) {
       throw prepareServiceError(
         HTTP_STATUS.BAD_REQUEST_400,
-        'this login already used'
+        "this login already used"
       );
     }
   };
 
-  public uniqueFieldUsed = async (uniqueFieldKey: string, key: string, model: any) => {
+  public uniqueFieldUsed = async (
+    uniqueFieldKey: string,
+    key: string,
+    model: any
+  ) => {
     const user = await model.findAll({
       where: {
         [key]: {

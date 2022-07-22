@@ -12,14 +12,14 @@ export enum HTTP_STATUS {
 }
 
 export enum ValidationMethods {
-  CREATE = 'create',
-  UPDATE = 'update',
-  LOGIN = 'login',
+  CREATE = "create",
+  UPDATE = "update",
+  LOGIN = "login",
 }
 
 export enum ErrorCatchableTypes {
-  REGULAR = 'regular',
-  AUTH = 'auth',
+  REGULAR = "regular",
+  AUTH = "auth",
 }
 
 export interface ServiceError {

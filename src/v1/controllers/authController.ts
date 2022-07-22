@@ -1,14 +1,12 @@
-import { Request, Response } from 'express';
-import ErrorCatchable from '../../decorators/ErrorCatchable';
-import { ErrorCatchableTypes, HTTP_STATUS } from '../../types';
-import authService from '../services/authService';
+import { Request, Response } from "express";
+import ErrorCatchable from "../../decorators/ErrorCatchable";
+import { loggerCreator } from "../../feature/logger";
+import { ErrorCatchableTypes, HTTP_STATUS } from "../../types";
+import authService from "../services/authService";
 
 class AuthController {
   private authService = authService;
-
-    // public async register(req: Request, res: Response) {
-    //   const user: UserModel = await userService.create(req.body);
-    // }
+  private logger = loggerCreator("auth_controller");
 
   @ErrorCatchable({ type: ErrorCatchableTypes.AUTH })
   public async login(req: Request, res: Response) {

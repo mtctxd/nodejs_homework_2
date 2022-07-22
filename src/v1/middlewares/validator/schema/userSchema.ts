@@ -1,9 +1,9 @@
-import { z } from 'zod';
-import { UserCreateProperties } from '../../../types';
+import { z } from "zod";
+import { UserCreateProperties } from "../../../types";
 
 const passwordRules = {
   errorMessage:
-    'password shoulc contain between 6 and 16 characters, at least one number, special character',
+    "password shoulc contain between 6 and 16 characters, at least one number, special character",
   regexp: /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,16}$/,
 };
 
