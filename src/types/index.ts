@@ -15,3 +15,20 @@ export enum ValidationMethods {
   CREATE = "create",
   UPDATE = "update",
 }
+
+export enum ErrorCatchableTypes {
+  REGULAR = 'regular',
+  AUTH = 'auth',
+}
+
+export interface ServiceError {
+  status: HTTP_STATUS;
+  info: {
+    message: string;
+    data?: unknown;
+  };
+}
+
+export type ErrorCatchableMetadata = {
+  type: ErrorCatchableTypes
+}

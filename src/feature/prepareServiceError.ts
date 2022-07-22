@@ -1,5 +1,4 @@
-import { HTTP_STATUS } from "../types";
-import { ServiceError } from "../v1/types";
+import { HTTP_STATUS, ServiceError } from "../types";
 
 export const prepareServiceError = (
   code: HTTP_STATUS,

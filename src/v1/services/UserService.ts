@@ -1,13 +1,13 @@
-import { UserModel } from "../models/userModel";
-import { userValidator } from "../middlewares/validator/Validator";
-import { User, UserCreateProperties } from "../types";
-import { v4 as uuid } from "uuid";
-import { FindOptions, Op } from "sequelize";
-import { Request } from "express";
-import { GroupModel } from "../models/groupModel";
-import { groupService } from "./GroupService";
-import { HTTP_STATUS } from "../../types";
-import { prepareServiceError } from "../../feature/prepareServiceError";
+import { UserModel } from '../models/userModel';
+import { userValidator } from '../middlewares/validator/Validator';
+import { User, UserCreateProperties } from '../types';
+import { v4 as uuid } from 'uuid';
+import { FindOptions, Op } from 'sequelize';
+import { Request } from 'express';
+import { GroupModel } from '../models/groupModel';
+import { groupService } from './GroupService';
+import { HTTP_STATUS } from '../../types';
+import { prepareServiceError } from '../../feature/prepareServiceError';
 
 class UserService<
   T extends typeof UserModel,
@@ -41,8 +41,24 @@ class UserService<
     return item;
   };
 
+  public getByLogin = async (login: string) => {
+    const user = await this.model.findOne({
+      where: {
+        login,
+      },
+    });
+    
+
+    if (user) {
+      
+      return user;
+    }
+
+    throw prepareServiceError(HTTP_STATUS.NOT_FOUND_404, 'wrong login');
+  };
+
   public create = async (reqBody: Required<U>) => {
-    await this.validateRequestBody(reqBody, "create");
+    await this.validateRequestBody(reqBody, 'create');
     const user_id = uuid();
 
     const newUserData = {
@@ -50,19 +66,21 @@ class UserService<
       ...reqBody,
     };
 
-    const newUser = await this.model.create(newUserData);
+    let newUser = await this.model.create(newUserData);
     await this.addGroupsToUsers(newUser, reqBody);
 
-    return await this.getByPK(user_id);
+    newUser = await this.getByPK(user_id) as UserModel;
+
+    return newUser;
   };
 
   public update = async (id: string, reqBody: Partial<U>) => {
-    await this.validateRequestBody(reqBody, "update");
+    await this.validateRequestBody(reqBody, 'update');
 
     const item = await this.getByPK(id);
 
     if (!item) {
-      throw prepareServiceError(HTTP_STATUS.NOT_FOUND_404, "user not found");
+      throw prepareServiceError(HTTP_STATUS.NOT_FOUND_404, 'user not found');
     }
 
     const updatedUser = await item.update(reqBody);
@@ -84,14 +102,14 @@ class UserService<
 
   protected validateRequestBody = async (
     reqBody: Partial<UserCreateProperties> | UserCreateProperties,
-    key: "create" | "update"
+    key: 'create' | 'update'
   ) => {
     const validationInfo = this.validator.validate(reqBody, key);
 
     if (!validationInfo?.success) {
       throw prepareServiceError(
         HTTP_STATUS.BAD_REQUEST_400,
-        "validation error",
+        'validation error',
         [validationInfo?.error.issues]
       );
     }
@@ -99,7 +117,7 @@ class UserService<
     if (reqBody.login && (await this.uniqueFieldUsed(reqBody.login))) {
       throw prepareServiceError(
         HTTP_STATUS.BAD_REQUEST_400,
-        "this login already used"
+        'this login already used'
       );
     }
   };
@@ -130,7 +148,7 @@ class UserService<
       options.where = {
         ...options.where,
         login: {
-          [Op.iLike]: ("%" + login + "%") as string,
+          [Op.iLike]: ('%' + login + '%') as string,
         },
       };
     }

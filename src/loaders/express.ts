@@ -5,6 +5,7 @@ import { GroupModel } from "../v1/models/groupModel";
 import { UserGroupModel } from "../v1/models/userGroupModel";
 import { UserModel } from "../v1/models/userModel";
 import groupRouter from "../v1/routers/groupRouter";
+import loginRouter from "../v1/routers/loginRouter";
 import userRouter from "../v1/routers/userRouter";
 import { GroupCreateProperties, LoggingTypes } from "../v1/types";
 
@@ -52,6 +53,7 @@ const initExpress = (app: Application) => {
   app.use(express.json());
   app.use("/v1/user", userRouter);
   app.use("/v1/group", groupRouter);
+  app.use("/v1", loginRouter);
 
   app.get("/v1/drop", async (req, res) => {
     try {
