@@ -21,14 +21,18 @@ class AuthService {
 
     const user: UserModel = await this.userService.getByLogin(login);
 
-    if (password !== user.password) {
+    console.log(await user.validatePassword(password));
+
+    const isPasswordValid = await user.validatePassword(password);
+    
+    if (!isPasswordValid) {
       throw prepareServiceError(
         HTTP_STATUS.BAD_REQUEST_400,
         "wrong credentials"
       );
     }
 
-    const token = this.jswSign(user);
+    const token = this.generaeAccessJWT(user);
 
     return token;
   }
@@ -36,16 +40,26 @@ class AuthService {
   public async register(req: Request) {
     const user = await this.userService.create(req.body);
 
-    const token = this.jswSign(user);
+    const token = this.generaeAccessJWT(user);
     return token;
   }
 
-  private jswSign(data: UserModel) {
+  private generaeAccessJWT(data: UserModel) {
     return jwt.sign(
       { user_id: data.user_id, login: data.login, age: data.age },
       this.accessKey,
       {
-        expiresIn: "2h",
+        expiresIn: "1h",
+      }
+    );
+  }
+  
+  private generaeRefreshJWT(data: UserModel) {
+    return jwt.sign(
+      { user_id: data.user_id, login: data.login, age: data.age },
+      this.refreshKey,
+      {
+        expiresIn: "24h",
       }
     );
   }

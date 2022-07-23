@@ -1,9 +1,9 @@
-import { z } from "zod";
-import { UserCreateProperties } from "../../../types";
+import { z } from 'zod';
+import { UserCreateProperties } from '../../../types';
 
 const passwordRules = {
   errorMessage:
-    "password shoulc contain between 6 and 16 characters, at least one number, special character",
+    'password shoulc contain between 6 and 16 characters, at least one number, special character',
   regexp: /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,16}$/,
 };
 
@@ -14,6 +14,8 @@ const userSchema = {
   password: z
     .string()
     .trim()
+    .min(6)
+    .max(16)
     .regex(passwordRules.regexp, { message: passwordRules.errorMessage }),
   age: z.number().int().min(12).max(120),
 };
@@ -25,6 +27,8 @@ const userSchemaOptional = {
   password: z
     .string()
     .trim()
+    .min(6)
+    .max(16)
     .regex(passwordRules.regexp, { message: passwordRules.errorMessage })
     .optional(),
   age: z.number().int().min(12).max(120).optional(),

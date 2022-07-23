@@ -60,10 +60,7 @@ class Validator {
   };
 
   public validateRequestBody = async (
-    reqBody:
-      | Partial<UserCreateProperties | GroupCreateProperties>
-      | UserCreateProperties
-      | GroupCreateProperties,
+    reqBody: PlaceholderProps,
     key: "create" | "update" | "login",
     isUniqueFieldUsed: boolean
   ) => {

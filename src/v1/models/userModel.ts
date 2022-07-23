@@ -14,13 +14,13 @@ import {
   Model,
   NonAttribute,
   Optional,
-} from "sequelize";
-import { appDB } from "../../loaders/appDB";
+} from 'sequelize';
+import { appDB } from '../../loaders/appDB';
+import { User } from '../types';
+import { GroupModel } from './groupModel';
+import bcrypt from 'bcrypt';
 
-import { User } from "../types";
-import { GroupModel } from "./groupModel";
-
-export type UserCreationAttributes = Optional<User, "is_deleted">;
+export type UserCreationAttributes = Optional<User, 'is_deleted'>;
 
 export class UserModel extends Model<User, UserCreationAttributes> {
   declare user_id: string;
@@ -57,6 +57,10 @@ export class UserModel extends Model<User, UserCreationAttributes> {
   declare static associations: {
     groups: Association<UserModel, GroupModel>;
   };
+
+  async validatePassword(password: string) {
+    return await bcrypt.compare(password, this.password);
+  }
 }
 
 UserModel.init(
@@ -86,6 +90,12 @@ UserModel.init(
   },
   {
     sequelize: appDB,
-    tableName: "users",
+    tableName: 'users',
+    hooks: {
+      beforeCreate: async (user) => {
+        const salt = await bcrypt.genSalt(10);
+        user.password = await bcrypt.hash(user.password, salt);
+      },
+    },
   }
 );
